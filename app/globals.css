@@ -73,3 +73,7 @@ html {
   border-radius: 8px;
   padding: 1.5rem;
 }
+
+/* --- Apple-like section snapping --- */
+main { scroll-snap-type: y mandatory; }
+section { scroll-snap-align: start; min-height: 100vh; }
