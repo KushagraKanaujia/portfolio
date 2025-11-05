@@ -165,3 +165,12 @@ const Hero3D = () => {
 };
 
 export default Hero3D;
+
+// --- Add inside your <Canvas> in this component ---
+// <ambientLight intensity={0.25} />
+// <spotLight position={[10,10,10]} angle={0.3} penumbra={1} intensity={1.2} castShadow />
+// <Environment preset="city" />
+// <ContactShadows position={[0,-1.2,0]} opacity={0.4} scale={20} blur={2.5} />
+// <EffectComposer><Bloom intensity={1.3} luminanceThreshold={0.25} luminanceSmoothing={0.95} /></EffectComposer>
+//
+// Also use <Text ... outlineWidth={0.02} outlineColor="#000" /> for readable labels.
