@@ -2,21 +2,14 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Gamepad2, X, RotateCcw } from "lucide-react";
+import { X, RotateCcw, Cloud, CloudRain } from "lucide-react";
 
-interface GameObject {
+interface Volcano {
   x: number;
-  y: number;
+  gapY: number;
+  gapSize: number;
   width: number;
-  height: number;
-}
-
-interface Obstacle extends GameObject {
-  type: "bug" | "error";
-}
-
-interface Collectible extends GameObject {
-  type: "star" | "coin";
+  passed: boolean;
 }
 
 interface MiniGameProps {
@@ -30,11 +23,23 @@ export default function MiniGame({ isOpen, setIsOpen }: MiniGameProps) {
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
+  const [weather, setWeather] = useState<"sunny" | "rainy">("sunny");
 
-  const [playerY, setPlayerY] = useState(250);
+  const [dragonY, setDragonY] = useState(200);
   const [velocity, setVelocity] = useState(0);
-  const [obstacles, setObstacles] = useState<Obstacle[]>([]);
-  const [collectibles, setCollectibles] = useState<Collectible[]>([]);
+  const [volcanoes, setVolcanoes] = useState<Volcano[]>([]);
+
+  const gameLoopRef = useRef<number | undefined>(undefined);
+  const volcanoTimerRef = useRef(0);
+
+  const GRAVITY = 0.6;
+  const FLAP_STRENGTH = -10;
+  const DRAGON_X = 100;
+  const DRAGON_SIZE = 50;
+  const GAME_WIDTH = 600;
+  const GAME_HEIGHT = 500;
+  const VOLCANO_WIDTH = 80;
+  const GAP_SIZE = 180;
 
   // Ensure component only renders on client
   useEffect(() => {
@@ -43,30 +48,15 @@ export default function MiniGame({ isOpen, setIsOpen }: MiniGameProps) {
 
   // Auto-start game when opened
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !isPlaying && !gameOver) {
       setTimeout(() => setIsPlaying(true), 500);
-    } else {
-      setIsPlaying(false);
     }
-  }, [isOpen]);
+  }, [isOpen, isPlaying, gameOver]);
 
-  const gameLoopRef = useRef<number | undefined>(undefined);
-  const canvasRef = useRef<HTMLDivElement>(null);
-  const obstacleTimerRef = useRef(0);
-  const collectibleTimerRef = useRef(0);
-
-  const GRAVITY = 0.6;
-  const JUMP_STRENGTH = -12;
-  const PLAYER_X = 80;
-  const PLAYER_SIZE = 40;
-  const GAME_WIDTH = 600;
-  const GAME_HEIGHT = 400;
-  const GROUND_Y = GAME_HEIGHT - 60;
-
-  // Load high score from localStorage
+  // Load high score
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("portfolio-game-highscore");
+      const saved = localStorage.getItem("flappy-dragon-highscore");
       if (saved) setHighScore(parseInt(saved));
     }
   }, []);
@@ -75,27 +65,37 @@ export default function MiniGame({ isOpen, setIsOpen }: MiniGameProps) {
   useEffect(() => {
     if (typeof window !== "undefined" && score > highScore) {
       setHighScore(score);
-      localStorage.setItem("portfolio-game-highscore", score.toString());
+      localStorage.setItem("flappy-dragon-highscore", score.toString());
     }
   }, [score, highScore]);
 
-  const jump = useCallback(() => {
-    if (!gameOver && playerY >= GROUND_Y - PLAYER_SIZE) {
-      setVelocity(JUMP_STRENGTH);
+  // Weather changes at 100 points
+  useEffect(() => {
+    if (score >= 100) {
+      setWeather("rainy");
+    } else {
+      setWeather("sunny");
     }
-  }, [gameOver, playerY, GROUND_Y, PLAYER_SIZE, JUMP_STRENGTH]);
+  }, [score]);
+
+  const flap = useCallback(() => {
+    if (!gameOver && isPlaying) {
+      setVelocity(FLAP_STRENGTH);
+    }
+  }, [gameOver, isPlaying, FLAP_STRENGTH]);
 
   const resetGame = () => {
-    setPlayerY(GROUND_Y - PLAYER_SIZE);
+    setDragonY(200);
     setVelocity(0);
-    setObstacles([]);
-    setCollectibles([]);
+    setVolcanoes([]);
     setScore(0);
     setGameOver(false);
     setIsPlaying(true);
+    setWeather("sunny");
+    volcanoTimerRef.current = 0;
   };
 
-  // Handle keyboard
+  // Handle keyboard/click
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.code === "Space" && isOpen) {
@@ -103,22 +103,14 @@ export default function MiniGame({ isOpen, setIsOpen }: MiniGameProps) {
         if (gameOver) {
           resetGame();
         } else if (isPlaying) {
-          jump();
+          flap();
         }
       }
     };
 
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [isOpen, gameOver, isPlaying, jump]);
-
-  // Reset timers when game starts
-  useEffect(() => {
-    if (isPlaying && !gameOver) {
-      obstacleTimerRef.current = 0;
-      collectibleTimerRef.current = 0;
-    }
-  }, [isPlaying, gameOver]);
+  }, [isOpen, gameOver, isPlaying, flap]);
 
   // Game loop
   useEffect(() => {
@@ -128,99 +120,75 @@ export default function MiniGame({ isOpen, setIsOpen }: MiniGameProps) {
 
     const gameLoop = () => {
       const now = Date.now();
-      const deltaTime = (now - lastTime) / 16.67; // Normalize to 60fps
+      const deltaTime = (now - lastTime) / 16.67;
       lastTime = now;
 
-      // Update player physics
+      // Update dragon physics
       setVelocity((v) => v + GRAVITY * deltaTime);
-      setPlayerY((y) => {
+      setDragonY((y) => {
         const newY = y + velocity * deltaTime;
-        return Math.min(newY, GROUND_Y - PLAYER_SIZE);
-      });
-
-      // Spawn obstacles
-      obstacleTimerRef.current += deltaTime;
-      if (obstacleTimerRef.current > 60) {
-        obstacleTimerRef.current = 0;
-        const types: ("bug" | "error")[] = ["bug", "error"];
-        setObstacles((prev) => [
-          ...prev,
-          {
-            x: GAME_WIDTH,
-            y: GROUND_Y - 40,
-            width: 40,
-            height: 40,
-            type: types[Math.floor(Math.random() * types.length)],
-          },
-        ]);
-      }
-
-      // Spawn collectibles
-      collectibleTimerRef.current += deltaTime;
-      if (collectibleTimerRef.current > 80) {
-        collectibleTimerRef.current = 0;
-        const types: ("star" | "coin")[] = ["star", "coin"];
-        setCollectibles((prev) => [
-          ...prev,
-          {
-            x: GAME_WIDTH,
-            y: Math.random() * (GROUND_Y - 100) + 50,
-            width: 30,
-            height: 30,
-            type: types[Math.floor(Math.random() * types.length)],
-          },
-        ]);
-      }
-
-      // Move and filter obstacles
-      setObstacles((prev) =>
-        prev
-          .map((obs) => ({ ...obs, x: obs.x - 5 * deltaTime }))
-          .filter((obs) => obs.x > -obs.width)
-      );
-
-      // Move and filter collectibles
-      setCollectibles((prev) =>
-        prev
-          .map((col) => ({ ...col, x: col.x - 5 * deltaTime }))
-          .filter((col) => col.x > -col.width)
-      );
-
-      // Collision detection - obstacles
-      const playerRect = {
-        x: PLAYER_X,
-        y: playerY,
-        width: PLAYER_SIZE,
-        height: PLAYER_SIZE,
-      };
-
-      obstacles.forEach((obs) => {
-        if (
-          playerRect.x < obs.x + obs.width &&
-          playerRect.x + playerRect.width > obs.x &&
-          playerRect.y < obs.y + obs.height &&
-          playerRect.y + playerRect.height > obs.y
-        ) {
+        // Check ceiling and floor collision
+        if (newY < 0 || newY > GAME_HEIGHT - DRAGON_SIZE) {
           setGameOver(true);
           setIsPlaying(false);
+          return y;
         }
+        return newY;
       });
 
-      // Collision detection - collectibles
-      collectibles.forEach((col) => {
-        if (
-          playerRect.x < col.x + col.width &&
-          playerRect.x + playerRect.width > col.x &&
-          playerRect.y < col.y + col.height &&
-          playerRect.y + playerRect.height > col.y
-        ) {
-          setScore((s) => s + (col.type === "star" ? 10 : 5));
-          setCollectibles((prev) => prev.filter((c) => c !== col));
-        }
-      });
+      // Spawn volcanoes
+      volcanoTimerRef.current += deltaTime;
+      if (volcanoTimerRef.current > 100) {
+        volcanoTimerRef.current = 0;
+        const gapY = Math.random() * (GAME_HEIGHT - GAP_SIZE - 100) + 50;
+        setVolcanoes((prev) => [
+          ...prev,
+          {
+            x: GAME_WIDTH,
+            gapY,
+            gapSize: GAP_SIZE,
+            width: VOLCANO_WIDTH,
+            passed: false,
+          },
+        ]);
+      }
 
-      // Increase score over time
-      setScore((s) => s + 0.1 * deltaTime);
+      // Move volcanoes and check collisions
+      setVolcanoes((prev) =>
+        prev
+          .map((volcano) => {
+            const newVolcano = { ...volcano, x: volcano.x - 3 * deltaTime };
+
+            // Check if passed
+            if (!newVolcano.passed && newVolcano.x + newVolcano.width < DRAGON_X) {
+              newVolcano.passed = true;
+              setScore((s) => s + 1);
+            }
+
+            // Collision detection
+            const dragonLeft = DRAGON_X;
+            const dragonRight = DRAGON_X + DRAGON_SIZE;
+            const dragonTop = dragonY;
+            const dragonBottom = dragonY + DRAGON_SIZE;
+
+            const volcanoLeft = newVolcano.x;
+            const volcanoRight = newVolcano.x + newVolcano.width;
+            const gapTop = newVolcano.gapY;
+            const gapBottom = newVolcano.gapY + newVolcano.gapSize;
+
+            // Check if dragon is within volcano x range
+            if (dragonRight > volcanoLeft && dragonLeft < volcanoRight) {
+              // Check if dragon hit top or bottom volcano
+              if (dragonTop < gapTop || dragonBottom > gapBottom) {
+                setGameOver(true);
+                setIsPlaying(false);
+              }
+            }
+
+            return newVolcano;
+          })
+          .filter((v) => v.x > -v.width)
+      );
 
       gameLoopRef.current = requestAnimationFrame(gameLoop);
     };
@@ -230,9 +198,13 @@ export default function MiniGame({ isOpen, setIsOpen }: MiniGameProps) {
     return () => {
       if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current);
     };
-  }, [isPlaying, gameOver, velocity, playerY, obstacles, collectibles, GROUND_Y, PLAYER_SIZE, GAME_WIDTH, GRAVITY, jump]);
+  }, [isPlaying, gameOver, velocity, dragonY, GRAVITY, GAME_HEIGHT, DRAGON_SIZE, GAME_WIDTH, VOLCANO_WIDTH, GAP_SIZE, DRAGON_X, flap]);
 
   if (!mounted) return null;
+
+  const bgGradient = weather === "sunny"
+    ? "from-sky-400 via-sky-300 to-orange-200"
+    : "from-gray-700 via-gray-600 to-gray-500";
 
   return (
     <>
@@ -250,13 +222,13 @@ export default function MiniGame({ isOpen, setIsOpen }: MiniGameProps) {
             {/* Header */}
             <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-4 flex items-center justify-between">
               <div>
-                <h3 className="font-semibold text-white">Code Runner</h3>
-                <p className="text-xs text-white/80">Dodge bugs, collect features!</p>
+                <h3 className="font-semibold text-white">🐉 Flappy Dragon</h3>
+                <p className="text-xs text-white/80">Dodge the volcanoes!</p>
               </div>
               <div className="flex items-center gap-3">
                 <div className="text-right">
-                  <div className="text-white text-sm font-bold">{Math.floor(score)}</div>
-                  <div className="text-white/70 text-xs">High: {highScore}</div>
+                  <div className="text-white text-sm font-bold">Score: {score}</div>
+                  <div className="text-white/70 text-xs">Best: {highScore}</div>
                 </div>
                 <button
                   onClick={() => {
@@ -273,108 +245,122 @@ export default function MiniGame({ isOpen, setIsOpen }: MiniGameProps) {
 
             {/* Game Canvas */}
             <div
-              ref={canvasRef}
-              className="relative bg-gradient-to-b from-indigo-950 via-purple-950 to-black overflow-hidden"
+              className={`relative bg-gradient-to-b ${bgGradient} overflow-hidden cursor-pointer`}
               style={{ width: GAME_WIDTH, height: GAME_HEIGHT }}
               onClick={() => {
                 if (gameOver) {
                   resetGame();
                 } else if (isPlaying) {
-                  jump();
+                  flap();
                 }
               }}
             >
-              {/* Stars background */}
-              <div className="absolute inset-0">
-                {Array.from({ length: 30 }).map((_, i) => (
+              {/* Weather effects */}
+              {weather === "rainy" && (
+                <div className="absolute inset-0 pointer-events-none">
+                  {Array.from({ length: 50 }).map((_, i) => (
+                    <motion.div
+                      key={i}
+                      className="absolute w-0.5 h-4 bg-blue-300/60"
+                      style={{
+                        left: `${Math.random() * 100}%`,
+                        top: -20,
+                      }}
+                      animate={{
+                        y: [0, GAME_HEIGHT + 20],
+                      }}
+                      transition={{
+                        duration: 0.5 + Math.random() * 0.3,
+                        repeat: Infinity,
+                        delay: Math.random() * 2,
+                        ease: "linear",
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {/* Clouds */}
+              <div className="absolute inset-0 pointer-events-none">
+                {[...Array(3)].map((_, i) => (
                   <motion.div
                     key={i}
-                    className="absolute w-1 h-1 bg-white rounded-full"
+                    className="absolute text-white/30"
                     style={{
-                      left: `${Math.random() * 100}%`,
-                      top: `${Math.random() * 100}%`,
+                      left: `${i * 35}%`,
+                      top: `${20 + i * 15}%`,
                     }}
                     animate={{
-                      opacity: [0.3, 1, 0.3],
+                      x: [-50, GAME_WIDTH + 50],
                     }}
                     transition={{
-                      duration: 2 + Math.random() * 2,
+                      duration: 20 + i * 5,
                       repeat: Infinity,
-                      delay: Math.random() * 2,
+                      ease: "linear",
                     }}
-                  />
+                  >
+                    {weather === "rainy" ? (
+                      <CloudRain className="w-12 h-12" />
+                    ) : (
+                      <Cloud className="w-12 h-12" />
+                    )}
+                  </motion.div>
                 ))}
               </div>
 
-              {/* Ground */}
-              <div
-                className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-purple-900/50 to-transparent"
-                style={{ height: 60 }}
-              />
-
-              {/* Player */}
+              {/* Dragon */}
               <motion.div
-                className="absolute bg-gradient-to-br from-cyan-400 to-blue-500 rounded-lg shadow-lg shadow-cyan-500/50"
+                className="absolute"
                 style={{
-                  left: PLAYER_X,
-                  top: playerY,
-                  width: PLAYER_SIZE,
-                  height: PLAYER_SIZE,
+                  left: DRAGON_X,
+                  top: dragonY,
+                  width: DRAGON_SIZE,
+                  height: DRAGON_SIZE,
                 }}
                 animate={{
-                  rotate: velocity < 0 ? -20 : 0,
+                  rotate: Math.min(Math.max(velocity * 3, -30), 30),
                 }}
               >
-                <div className="w-full h-full flex items-center justify-center text-2xl">
-                  🚀
-                </div>
+                <div className="text-5xl">🐉</div>
               </motion.div>
 
-              {/* Obstacles */}
-              {obstacles.map((obs, i) => (
-                <div
-                  key={`obs-${i}`}
-                  className="absolute rounded-lg"
-                  style={{
-                    left: obs.x,
-                    top: obs.y,
-                    width: obs.width,
-                    height: obs.height,
-                    background:
-                      obs.type === "bug"
-                        ? "linear-gradient(135deg, #ef4444, #dc2626)"
-                        : "linear-gradient(135deg, #f97316, #ea580c)",
-                  }}
-                >
-                  <div className="w-full h-full flex items-center justify-center text-2xl">
-                    {obs.type === "bug" ? "🐛" : "⚠️"}
+              {/* Volcanoes */}
+              {volcanoes.map((volcano, i) => (
+                <div key={i}>
+                  {/* Top volcano */}
+                  <div
+                    className="absolute bg-gradient-to-b from-red-600 to-orange-500"
+                    style={{
+                      left: volcano.x,
+                      top: 0,
+                      width: volcano.width,
+                      height: volcano.gapY,
+                      clipPath: "polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%)",
+                    }}
+                  >
+                    <div className="absolute bottom-0 left-0 right-0 h-4 bg-yellow-500" />
+                  </div>
+
+                  {/* Bottom volcano */}
+                  <div
+                    className="absolute bg-gradient-to-t from-red-600 to-orange-500"
+                    style={{
+                      left: volcano.x,
+                      top: volcano.gapY + volcano.gapSize,
+                      width: volcano.width,
+                      height: GAME_HEIGHT - (volcano.gapY + volcano.gapSize),
+                      clipPath: "polygon(0% 0%, 100% 0%, 80% 100%, 20% 100%)",
+                    }}
+                  >
+                    <div className="absolute top-0 left-0 right-0 h-4 bg-yellow-500" />
                   </div>
                 </div>
               ))}
 
-              {/* Collectibles */}
-              {collectibles.map((col, i) => (
-                <motion.div
-                  key={`col-${i}`}
-                  className="absolute"
-                  style={{
-                    left: col.x,
-                    top: col.y,
-                    width: col.width,
-                    height: col.height,
-                  }}
-                  animate={{
-                    scale: [1, 1.2, 1],
-                    rotate: [0, 360],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                  }}
-                >
-                  <div className="text-2xl">{col.type === "star" ? "⭐" : "💎"}</div>
-                </motion.div>
-              ))}
+              {/* Score display */}
+              <div className="absolute top-4 left-1/2 -translate-x-1/2 text-6xl font-bold text-white/20">
+                {score}
+              </div>
 
               {/* Game Over Screen */}
               <AnimatePresence>
@@ -382,23 +368,24 @@ export default function MiniGame({ isOpen, setIsOpen }: MiniGameProps) {
                   <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+                    className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm"
                   >
                     <div className="text-center">
+                      <div className="text-6xl mb-4">💥</div>
                       <h2 className="text-4xl font-bold text-white mb-4">Game Over!</h2>
-                      <p className="text-2xl text-cyan-400 mb-2">Score: {Math.floor(score)}</p>
-                      {score > highScore && (
-                        <p className="text-lg text-yellow-400 mb-6">New High Score! 🎉</p>
+                      <p className="text-2xl text-yellow-400 mb-2">Score: {score}</p>
+                      {score > highScore && score > 0 && (
+                        <p className="text-lg text-green-400 mb-6">New High Score! 🎉</p>
                       )}
                       <button
                         onClick={resetGame}
-                        className="px-6 py-3 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full font-semibold text-black hover:scale-110 transition-transform flex items-center gap-2 mx-auto"
+                        className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full font-semibold text-white hover:scale-110 transition-transform flex items-center gap-2 mx-auto"
                       >
                         <RotateCcw className="w-5 h-5" />
                         Play Again
                       </button>
-                      <p className="text-sm text-gray-400 mt-4">
-                        Press SPACE or Click to jump
+                      <p className="text-sm text-gray-300 mt-4">
+                        Tap SPACE or Click to flap
                       </p>
                     </div>
                   </motion.div>
@@ -412,22 +399,23 @@ export default function MiniGame({ isOpen, setIsOpen }: MiniGameProps) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+                    className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm"
                   >
                     <div className="text-center">
-                      <h2 className="text-3xl font-bold text-white mb-4">Code Runner</h2>
-                      <p className="text-gray-300 mb-6">
-                        Dodge bugs and errors!<br />
-                        Collect stars and features!
+                      <div className="text-8xl mb-6">🐉</div>
+                      <h2 className="text-4xl font-bold text-white mb-4">Flappy Dragon</h2>
+                      <p className="text-gray-200 mb-6">
+                        Tap to flap through the volcanoes!<br />
+                        Weather changes at 100 points
                       </p>
                       <button
                         onClick={() => setIsPlaying(true)}
-                        className="px-8 py-4 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full font-semibold text-black hover:scale-110 transition-transform text-lg"
+                        className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full font-semibold text-white hover:scale-110 transition-transform text-lg"
                       >
-                        Start Game
+                        Start Flying
                       </button>
-                      <p className="text-sm text-gray-400 mt-4">
-                        Press SPACE or Click to jump
+                      <p className="text-sm text-gray-300 mt-4">
+                        Press SPACE or Click to flap
                       </p>
                     </div>
                   </motion.div>
@@ -436,8 +424,9 @@ export default function MiniGame({ isOpen, setIsOpen }: MiniGameProps) {
             </div>
 
             {/* Controls Info */}
-            <div className="bg-black/40 p-3 text-center text-xs text-gray-400">
-              <span className="font-semibold text-white">Controls:</span> SPACE or CLICK to jump • Dodge 🐛 bugs and ⚠️ errors • Collect ⭐ stars (10pts) & 💎 gems (5pts)
+            <div className="bg-black/40 p-3 text-center text-xs text-gray-300">
+              <span className="font-semibold text-white">Controls:</span> SPACE or CLICK to flap •
+              Dodge volcanoes 🌋 • Weather changes at 100 points {weather === "rainy" ? "🌧️" : "☀️"}
             </div>
           </motion.div>
         )}
