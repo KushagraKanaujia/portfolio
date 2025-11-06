@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import CountUp from "react-countup";
 import { useInView } from "react-intersection-observer";
 import { Zap } from "lucide-react";
+import DataFlowBackground from "./DataFlowBackground";
 
 interface Metric {
   value: string;
@@ -87,9 +88,15 @@ const MetricsCarousel = () => {
   return (
     <section
       ref={ref}
-      className="min-h-screen flex items-center bg-gradient-to-b from-black via-neutral-950 to-black py-20"
+      className="min-h-screen flex items-center bg-gradient-to-b from-black via-neutral-950 to-black py-20 relative overflow-hidden"
     >
-      <div className="w-full max-w-5xl mx-auto text-center px-4">
+      {/* Animated Data Flow Background */}
+      <DataFlowBackground />
+
+      {/* Radial gradient overlay for depth */}
+      <div className="absolute inset-0 bg-gradient-radial from-transparent via-black/50 to-black pointer-events-none" />
+
+      <div className="w-full max-w-5xl mx-auto text-center px-4 relative z-10">
         {/* Heading - Fast entrance */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}

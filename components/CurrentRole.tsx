@@ -3,6 +3,7 @@
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { MapPin, GraduationCap, Briefcase, TrendingUp, Sparkles } from "lucide-react";
 import { useRef } from "react";
+import MatrixRain from "./MatrixRain";
 
 const CurrentRole = () => {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -27,8 +28,14 @@ const CurrentRole = () => {
   };
 
   return (
-    <section className="min-h-screen flex items-center bg-gradient-to-b from-black via-neutral-950 to-black py-20">
-      <div className="w-full max-w-6xl mx-auto text-center px-4">
+    <section id="experience" className="min-h-screen flex items-center bg-gradient-to-b from-black via-neutral-950 to-black py-20 relative overflow-hidden">
+      {/* Matrix Rain Background */}
+      <MatrixRain />
+
+      {/* Radial gradient overlay for depth */}
+      <div className="absolute inset-0 bg-gradient-radial from-transparent via-black/60 to-black pointer-events-none" />
+
+      <div className="w-full max-w-6xl mx-auto text-center px-4 relative z-10">
         {/* Section Title - Fast */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}

@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { Code, Zap, Award, TrendingUp } from "lucide-react";
 import FloatingShapes from "./FloatingShapes";
 import RevealText from "./RevealText";
+import NeuralBackground from "./NeuralBackground";
+import FloatingTechIcons from "./FloatingTechIcons";
 
 const highlights = [
   {
@@ -38,7 +40,14 @@ export default function AboutCinematic() {
       id="about"
       className="min-h-screen flex items-center bg-gradient-to-b from-black via-neutral-950 to-black py-20 relative overflow-hidden"
     >
+      {/* Animated Backgrounds */}
+      <NeuralBackground />
       <FloatingShapes />
+      <FloatingTechIcons />
+
+      {/* Radial gradient overlay for depth */}
+      <div className="absolute inset-0 bg-radial-gradient from-transparent via-black/40 to-black pointer-events-none" />
+
       <div className="w-full max-w-7xl mx-auto px-4 relative z-10">
         {/* Section Title */}
         <motion.div
