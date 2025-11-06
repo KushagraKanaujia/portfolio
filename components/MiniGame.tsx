@@ -52,6 +52,8 @@ export default function MiniGame({ isOpen, setIsOpen }: MiniGameProps) {
 
   const gameLoopRef = useRef<number | undefined>(undefined);
   const canvasRef = useRef<HTMLDivElement>(null);
+  const obstacleTimerRef = useRef(0);
+  const collectibleTimerRef = useRef(0);
 
   const GRAVITY = 0.6;
   const JUMP_STRENGTH = -12;
@@ -110,13 +112,19 @@ export default function MiniGame({ isOpen, setIsOpen }: MiniGameProps) {
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, [isOpen, gameOver, isPlaying, jump]);
 
+  // Reset timers when game starts
+  useEffect(() => {
+    if (isPlaying && !gameOver) {
+      obstacleTimerRef.current = 0;
+      collectibleTimerRef.current = 0;
+    }
+  }, [isPlaying, gameOver]);
+
   // Game loop
   useEffect(() => {
     if (!isPlaying || gameOver) return;
 
     let lastTime = Date.now();
-    let obstacleTimer = 0;
-    let collectibleTimer = 0;
 
     const gameLoop = () => {
       const now = Date.now();
@@ -131,9 +139,9 @@ export default function MiniGame({ isOpen, setIsOpen }: MiniGameProps) {
       });
 
       // Spawn obstacles
-      obstacleTimer += deltaTime;
-      if (obstacleTimer > 90) {
-        obstacleTimer = 0;
+      obstacleTimerRef.current += deltaTime;
+      if (obstacleTimerRef.current > 60) {
+        obstacleTimerRef.current = 0;
         const types: ("bug" | "error")[] = ["bug", "error"];
         setObstacles((prev) => [
           ...prev,
@@ -148,9 +156,9 @@ export default function MiniGame({ isOpen, setIsOpen }: MiniGameProps) {
       }
 
       // Spawn collectibles
-      collectibleTimer += deltaTime;
-      if (collectibleTimer > 120) {
-        collectibleTimer = 0;
+      collectibleTimerRef.current += deltaTime;
+      if (collectibleTimerRef.current > 80) {
+        collectibleTimerRef.current = 0;
         const types: ("star" | "coin")[] = ["star", "coin"];
         setCollectibles((prev) => [
           ...prev,
