@@ -16,6 +16,7 @@ import EasterEggs from "@/components/EasterEggs";
 import PerformanceMonitor from "@/components/PerformanceMonitor";
 import ScrollProgress from "@/components/ScrollProgress";
 import AnimatedDivider from "@/components/AnimatedDivider";
+import AIAssistant from "@/components/AIAssistant";
 
 export default function Home() {
   const [commandOpen, setCommandOpen] = useState(false);
@@ -30,6 +31,7 @@ export default function Home() {
       <CustomCursor />
       <EasterEggs />
       <PerformanceMonitor />
+      <AIAssistant />
 
       {/* Section 1: FULL-SCREEN Neural Network Hero with Scattering Dots */}
       <FullScreenNeuralHero />

@@ -43,6 +43,8 @@ export default function RevealText({ text, className = "", delay = 0 }: RevealTe
           key={index}
           variants={child}
           transition={{ type: "spring", damping: 12, stiffness: 100 }}
+          className="inline-block"
+          style={{ marginRight: letter === " " ? "0" : "0.05em" }}
         >
           {letter === " " ? "\u00A0" : letter}
         </motion.span>

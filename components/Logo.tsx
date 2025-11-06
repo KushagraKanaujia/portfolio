@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 export default function Logo() {
   return (
     <motion.div
-      className="relative w-12 h-12 cursor-pointer"
+      className="relative w-10 h-10 cursor-pointer"
       initial={{ opacity: 0, rotate: -180 }}
       animate={{ opacity: 1, rotate: 0 }}
       transition={{ type: "spring", stiffness: 100, damping: 15 }}
@@ -67,10 +67,10 @@ export default function Logo() {
 
       {/* Glow effect */}
       <motion.div
-        className="absolute inset-0 rounded-lg bg-accent/20 blur-xl -z-10"
+        className="absolute inset-0 rounded-lg bg-accent/10 blur-lg -z-10"
         animate={{
-          opacity: [0.3, 0.6, 0.3],
-          scale: [0.8, 1.2, 0.8],
+          opacity: [0.2, 0.4, 0.2],
+          scale: [0.9, 1.1, 0.9],
         }}
         transition={{
           duration: 3,
