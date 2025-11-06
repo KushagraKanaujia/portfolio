@@ -2,6 +2,8 @@
 
 import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
+import FloatingShapes from "./FloatingShapes";
+import RevealText from "./RevealText";
 
 // Technology data with icon paths (using SVG or emoji)
 const technologies = [
@@ -46,6 +48,7 @@ export default function SkillsWithLogos() {
       className="section-100vh bg-gradient-to-b from-black via-neutral-950 to-black relative overflow-hidden"
       ref={containerRef}
     >
+      <FloatingShapes />
       {/* Floating Background Tech Icons */}
       <div className="absolute inset-0 opacity-10 pointer-events-none">
         {technologies.slice(0, 8).map((tech, i) => (
@@ -71,9 +74,10 @@ export default function SkillsWithLogos() {
           transition={{ duration: 0.8 }}
           className="text-center mb-20"
         >
-          <h2 className="text-5xl md:text-7xl font-bold gradient-text-apple mb-6">
-            Tech Arsenal
-          </h2>
+          <RevealText
+            text="Tech Arsenal"
+            className="text-5xl md:text-7xl font-bold gradient-text-apple mb-6 justify-center"
+          />
           <p className="text-xl md:text-2xl text-gray-400">
             Tools I wield to build exceptional software
           </p>

@@ -2,11 +2,13 @@
 
 import { motion } from "framer-motion";
 import { Mail, Download, Github, Linkedin, Twitter } from "lucide-react";
+import FloatingShapes from "./FloatingShapes";
 
 const CTACinematic = () => {
   return (
-    <section className="section-100vh bg-gradient-to-b from-black via-neutral-950 to-black">
-      <div className="w-full max-w-5xl mx-auto text-center px-4">
+    <section className="section-100vh bg-gradient-to-b from-black via-neutral-950 to-black relative overflow-hidden">
+      <FloatingShapes />
+      <div className="w-full max-w-5xl mx-auto text-center px-4 relative z-10">
         {/* Main CTA Text */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}

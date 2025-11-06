@@ -14,6 +14,8 @@ import CommandPalette from "@/components/CommandPalette";
 import CustomCursor from "@/components/CustomCursor";
 import EasterEggs from "@/components/EasterEggs";
 import PerformanceMonitor from "@/components/PerformanceMonitor";
+import ScrollProgress from "@/components/ScrollProgress";
+import AnimatedDivider from "@/components/AnimatedDivider";
 
 export default function Home() {
   const [commandOpen, setCommandOpen] = useState(false);
@@ -21,6 +23,7 @@ export default function Home() {
   return (
     <main className="relative bg-black text-white overflow-x-hidden">
       {/* Unique Features - Show off technical prowess */}
+      <ScrollProgress />
       <NavigationBar onOpenCommand={() => setCommandOpen(true)} />
       <QuickNav />
       <CommandPalette open={commandOpen} setOpen={setCommandOpen} />
@@ -34,14 +37,20 @@ export default function Home() {
       {/* Section 2: Impact Metrics - Huge Animated Numbers */}
       <MetricsCarousel />
 
+      <AnimatedDivider />
+
       {/* Section 3: Current Role - Floating 3D Card */}
       <CurrentRole />
 
       {/* Section 4: About - Who I Am & What I Do */}
       <AboutCinematic />
 
+      <AnimatedDivider />
+
       {/* Section 5: Skills - With Tech Logos & Animations */}
       <SkillsWithLogos />
+
+      <AnimatedDivider />
 
       {/* Section 6-8: Featured Projects - Immersive Showcases */}
       <section id="projects" className="scroll-mt-20">

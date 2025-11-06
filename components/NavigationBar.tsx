@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Command } from "lucide-react";
+import Logo from "./Logo";
 
 const SECTIONS = ["home", "about", "experience", "skills", "projects", "contact"];
 
@@ -61,11 +62,11 @@ export default function NavigationBar({ onOpenCommand }: NavigationBarProps) {
     >
       <div className="wrap flex h-16 items-center justify-between">
         {/* Logo */}
-        <a
-          href="#home"
-          className="text-xl font-semibold tracking-tight hover:text-accent transition-colors"
-        >
-          Kushagra<span className="text-accent">.</span>
+        <a href="#home" className="flex items-center gap-3">
+          <Logo />
+          <span className="text-xl font-semibold tracking-tight hover:text-accent transition-colors hidden sm:block">
+            Kushagra<span className="text-accent">.</span>
+          </span>
         </a>
 
         {/* Desktop Navigation */}

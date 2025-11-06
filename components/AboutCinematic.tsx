@@ -2,6 +2,8 @@
 
 import { motion } from "framer-motion";
 import { Code, Zap, Award, TrendingUp } from "lucide-react";
+import FloatingShapes from "./FloatingShapes";
+import RevealText from "./RevealText";
 
 const highlights = [
   {
@@ -34,9 +36,10 @@ export default function AboutCinematic() {
   return (
     <section
       id="about"
-      className="min-h-screen flex items-center bg-gradient-to-b from-black via-neutral-950 to-black py-20"
+      className="min-h-screen flex items-center bg-gradient-to-b from-black via-neutral-950 to-black py-20 relative overflow-hidden"
     >
-      <div className="w-full max-w-7xl mx-auto px-4">
+      <FloatingShapes />
+      <div className="w-full max-w-7xl mx-auto px-4 relative z-10">
         {/* Section Title */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -54,9 +57,11 @@ export default function AboutCinematic() {
           >
             About Me
           </motion.p>
-          <h2 className="text-4xl md:text-6xl font-bold gradient-text-apple">
-            Building the Future, One Line at a Time
-          </h2>
+          <RevealText
+            text="Building the Future, One Line at a Time"
+            className="text-4xl md:text-6xl font-bold gradient-text-apple justify-center"
+            delay={0.2}
+          />
         </motion.div>
 
         {/* Content Grid */}
