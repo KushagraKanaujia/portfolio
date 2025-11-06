@@ -2,32 +2,342 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #0a0a0a;
-  --foreground: #ffffff;
-}
+/* ========================================
+   APPLE-LEVEL DESIGN SYSTEM
+   ======================================== */
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+html {
+  scroll-behavior: smooth;
   overflow-x: hidden;
 }
 
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
+html, body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(to bottom, #000000 0%, #0a0a0a 50%, #000000 100%);
+  color: #ffffff;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom scrollbar */
+/* Title font */
+h1, h2, h3 {
+  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: 0.05em;
+}
+
+/* Apple-style typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* Better vertical rhythm */
+p {
+  line-height: 1.8;
+}
+
+/* Shared container */
+.wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.section {
+  padding: 5rem 0;
+}
+
+@media (max-width: 640px) {
+  .section {
+    padding: 3.5rem 0;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ========================================
+   GRADIENT TEXT - APPLE STYLE
+   ======================================== */
+.gradient-text-apple {
+  background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-cyan {
+  background: linear-gradient(135deg, #00d9ff 0%, #0066ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-purple {
+  background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-orange {
+  background: linear-gradient(135deg, #ff6b35 0%, #ffa07a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-green {
+  background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ========================================
+   GLASSMORPHISM
+   ======================================== */
+.glass-card {
+  background: rgba(30, 30, 30, 0.6);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.glass-card:hover {
+  background: rgba(30, 30, 30, 0.8);
+  border-color: rgba(0, 217, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 217, 255, 0.2);
+}
+
+/* ========================================
+   GLOW EFFECTS
+   ======================================== */
+.glow-cyan {
+  box-shadow: 0 0 40px rgba(0, 217, 255, 0.3);
+}
+
+.glow-cyan-strong {
+  box-shadow: 0 0 60px rgba(0, 217, 255, 0.5);
+}
+
+.text-glow {
+  text-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+.animate-gradient {
+  background-size: 300% 300%;
+  animation: gradientFlow 8s ease infinite;
+}
+
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 40px rgba(0, 217, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 80px rgba(0, 217, 255, 0.6);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* ========================================
+   SECTION STYLING - 100vh
+   ======================================== */
+.section-100vh {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 60px;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .section-100vh {
+    padding: 60px 20px;
+    min-height: auto;
+    padding-top: 80px;
+    padding-bottom: 80px;
+  }
+}
+
+/* ========================================
+   APPLE-STYLE BUTTONS
+   ======================================== */
+.btn-apple {
+  padding: 16px 32px;
+  border-radius: 980px;
+  font-size: 17px;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(20px);
+}
+
+.btn-apple:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.02);
+}
+
+.btn-apple-primary {
+  background: linear-gradient(135deg, #00d9ff 0%, #0066ff 100%);
+  border: none;
+  color: #000;
+  font-weight: 600;
+}
+
+.btn-apple-primary:hover {
+  box-shadow: 0 10px 40px rgba(0, 217, 255, 0.4);
+  transform: scale(1.05);
+}
+
+/* ========================================
+   BIG METRICS - APPLE STYLE
+   ======================================== */
+.big-number {
+  font-size: clamp(60px, 15vw, 140px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, #00d9ff 0%, #0066ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ========================================
+   SCROLL INDICATOR
+   ======================================== */
+.scroll-indicator {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(10px); }
+}
+
+/* ========================================
+   CUSTOM SCROLLBAR
+   ======================================== */
 ::-webkit-scrollbar {
   width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #00d9ff 0%, #0066ff 100%);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00d9ff;
+}
+
+/* ========================================
+   THREE.JS CANVAS
+   ======================================== */
+canvas {
+  display: block;
+  outline: none;
+  touch-action: none;
+}
+
+/* Navbar active state */
+.nav-active {
+  color: #00d9ff;
+  position: relative;
+}
+
+.nav-active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #00d9ff;
+  border-radius: 2px;
+}
+
+/* Terminal styling */
+.terminal {
+  background: rgba(0, 217, 255, 0.05);
+  border: 1px solid rgba(0, 217, 255, 0.2);
+  border-radius: 12px;
+  padding: 1.5rem;
+  font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #00d9ff 0%, #0ea5e9 50%, #a855f7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glow card effect */
+.glow-card {
+  background: rgba(30, 30, 30, 0.5);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.glow-card:hover {
+  background: rgba(30, 30, 30, 0.8);
+  box-shadow: 0 0 30px rgba(0, 217, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
 }
 
 ::-webkit-scrollbar-track {
@@ -35,45 +345,11 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2a2a2a;
-  border-radius: 4px;
+  background: #00d9ff;
+  border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3a3a3a;
+  background: #0ea5e9;
 }
 
-/* Glow effect */
-.glow {
-  text-shadow: 0 0 10px rgba(0, 217, 255, 0.5), 0 0 20px rgba(0, 217, 255, 0.3);
-}
-
-.glow-card {
-  box-shadow: 0 0 20px rgba(0, 217, 255, 0.1);
-  transition: box-shadow 0.3s ease;
-}
-
-.glow-card:hover {
-  box-shadow: 0 0 30px rgba(0, 217, 255, 0.3);
-}
-
-/* Gradient text */
-.gradient-text {
-  background: linear-gradient(90deg, #00d9ff 0%, #0ea5e9 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Terminal style */
-.terminal {
-  font-family: 'Courier New', Courier, monospace;
-  background: #1e1e1e;
-  border: 1px solid #2a2a2a;
-  border-radius: 8px;
-  padding: 1.5rem;
-}
-
-/* --- Apple-like section snapping --- */
-main { scroll-snap-type: y mandatory; }
-section { scroll-snap-align: start; min-height: 100vh; }
