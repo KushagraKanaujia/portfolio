@@ -19,8 +19,13 @@ interface Collectible extends GameObject {
   type: "star" | "coin";
 }
 
-export default function MiniGame() {
-  const [isOpen, setIsOpen] = useState(false);
+interface MiniGameProps {
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+}
+
+export default function MiniGame({ isOpen, setIsOpen }: MiniGameProps) {
+  const [mounted, setMounted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
@@ -30,6 +35,20 @@ export default function MiniGame() {
   const [velocity, setVelocity] = useState(0);
   const [obstacles, setObstacles] = useState<Obstacle[]>([]);
   const [collectibles, setCollectibles] = useState<Collectible[]>([]);
+
+  // Ensure component only renders on client
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Auto-start game when opened
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => setIsPlaying(true), 500);
+    } else {
+      setIsPlaying(false);
+    }
+  }, [isOpen]);
 
   const gameLoopRef = useRef<number | undefined>(undefined);
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -44,13 +63,15 @@ export default function MiniGame() {
 
   // Load high score from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem("portfolio-game-highscore");
-    if (saved) setHighScore(parseInt(saved));
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("portfolio-game-highscore");
+      if (saved) setHighScore(parseInt(saved));
+    }
   }, []);
 
   // Save high score
   useEffect(() => {
-    if (score > highScore) {
+    if (typeof window !== "undefined" && score > highScore) {
       setHighScore(score);
       localStorage.setItem("portfolio-game-highscore", score.toString());
     }
@@ -203,28 +224,10 @@ export default function MiniGame() {
     };
   }, [isPlaying, gameOver, velocity, playerY, obstacles, collectibles, GROUND_Y, PLAYER_SIZE, GAME_WIDTH, GRAVITY, jump]);
 
+  if (!mounted) return null;
+
   return (
     <>
-      {/* Game Button */}
-      <AnimatePresence>
-        {!isOpen && (
-          <motion.button
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            onClick={() => {
-              setIsOpen(true);
-              setTimeout(() => setIsPlaying(true), 500);
-            }}
-            className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg shadow-purple-500/50 flex items-center justify-center group hover:scale-110 transition-transform"
-            whileHover={{ rotate: [0, -10, 10, -10, 0] }}
-            transition={{ duration: 0.5 }}
-          >
-            <Gamepad2 className="w-6 h-6 text-white" />
-          </motion.button>
-        )}
-      </AnimatePresence>
-
       {/* Game Window */}
       <AnimatePresence>
         {isOpen && (

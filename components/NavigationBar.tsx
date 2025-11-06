@@ -2,16 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Command } from "lucide-react";
-import Logo from "./Logo";
+import { Command, Gamepad2 } from "lucide-react";
 
 const SECTIONS = ["home", "about", "experience", "skills", "projects", "contact"];
 
 interface NavigationBarProps {
   onOpenCommand: () => void;
+  onOpenGame: () => void;
 }
 
-export default function NavigationBar({ onOpenCommand }: NavigationBarProps) {
+export default function NavigationBar({ onOpenCommand, onOpenGame }: NavigationBarProps) {
   const [active, setActive] = useState("home");
   const [scrolled, setScrolled] = useState(false);
 
@@ -61,13 +61,20 @@ export default function NavigationBar({ onOpenCommand }: NavigationBarProps) {
       }`}
     >
       <div className="wrap flex h-16 items-center justify-between">
-        {/* Logo */}
-        <a href="#home" className="flex items-center gap-3">
-          <Logo />
+        {/* Game Button */}
+        <div className="flex items-center gap-3">
+          <motion.button
+            onClick={onOpenGame}
+            whileHover={{ scale: 1.1, rotate: [0, -10, 10, -10, 0] }}
+            whileTap={{ scale: 0.95 }}
+            className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg shadow-purple-500/30 flex items-center justify-center hover:shadow-purple-500/50 transition-shadow"
+          >
+            <Gamepad2 className="w-5 h-5 text-white" />
+          </motion.button>
           <span className="text-xl font-semibold tracking-tight hover:text-accent transition-colors hidden sm:block">
             Kushagra<span className="text-accent">.</span>
           </span>
-        </a>
+        </div>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-8">

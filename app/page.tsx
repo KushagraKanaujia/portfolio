@@ -20,18 +20,22 @@ import MiniGame from "@/components/MiniGame";
 
 export default function Home() {
   const [commandOpen, setCommandOpen] = useState(false);
+  const [gameOpen, setGameOpen] = useState(false);
 
   return (
     <main className="relative bg-black text-white overflow-x-hidden">
       {/* Unique Features - Show off technical prowess */}
       <ScrollProgress />
-      <NavigationBar onOpenCommand={() => setCommandOpen(true)} />
+      <NavigationBar
+        onOpenCommand={() => setCommandOpen(true)}
+        onOpenGame={() => setGameOpen(true)}
+      />
       <QuickNav />
       <CommandPalette open={commandOpen} setOpen={setCommandOpen} />
       <CustomCursor />
       <EasterEggs />
       <PerformanceMonitor />
-      <MiniGame />
+      <MiniGame isOpen={gameOpen} setIsOpen={setGameOpen} />
 
       {/* Section 1: FULL-SCREEN Neural Network Hero with Scattering Dots */}
       <FullScreenNeuralHero />
