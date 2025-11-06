@@ -17,6 +17,8 @@ import PerformanceMonitor from "@/components/PerformanceMonitor";
 import ScrollProgress from "@/components/ScrollProgress";
 import AnimatedDivider from "@/components/AnimatedDivider";
 import MiniGame from "@/components/MiniGame";
+import SectionNav from "@/components/SectionNav";
+import FadeInView from "@/components/FadeInView";
 
 export default function Home() {
   const [commandOpen, setCommandOpen] = useState(false);
@@ -31,6 +33,7 @@ export default function Home() {
         onOpenGame={() => setGameOpen(true)}
       />
       <QuickNav />
+      <SectionNav />
       <CommandPalette open={commandOpen} setOpen={setCommandOpen} />
       <CustomCursor />
       <EasterEggs />
@@ -41,20 +44,28 @@ export default function Home() {
       <FullScreenNeuralHero />
 
       {/* Section 2: Impact Metrics - Huge Animated Numbers */}
-      <MetricsCarousel />
+      <FadeInView>
+        <MetricsCarousel />
+      </FadeInView>
 
       <AnimatedDivider />
 
       {/* Section 3: Current Role - Floating 3D Card */}
-      <CurrentRole />
+      <FadeInView direction="left" delay={0.2}>
+        <CurrentRole />
+      </FadeInView>
 
       {/* Section 4: About - Who I Am & What I Do */}
-      <AboutCinematic />
+      <FadeInView direction="right" delay={0.1}>
+        <AboutCinematic />
+      </FadeInView>
 
       <AnimatedDivider />
 
       {/* Section 5: Skills - With Tech Logos & Animations */}
-      <SkillsWithLogos />
+      <FadeInView>
+        <SkillsWithLogos />
+      </FadeInView>
 
       <AnimatedDivider />
 
