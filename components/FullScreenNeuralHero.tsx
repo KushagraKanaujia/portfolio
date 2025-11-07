@@ -1,8 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
-import { TypeAnimation } from "react-type-animation";
+import { ArrowDown, Github, Linkedin } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 export default function FullScreenNeuralHero() {
@@ -212,110 +211,70 @@ export default function FullScreenNeuralHero() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80 pointer-events-none" />
 
       {/* Content */}
-      <div className="relative z-10 text-center px-6 max-w-5xl">
-        {/* Name with Fast Animation */}
+      <div className="relative z-10 text-center px-6 max-w-4xl">
+        {/* Name */}
         <motion.h1
-          initial={{ opacity: 0, y: 30, scale: 0.9 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-bold tracking-tight mb-4 sm:mb-6 leading-tight"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-bold tracking-tight mb-6 leading-tight"
         >
-          KUSHAGRA{" "}
-          <span className="gradient-cyan text-glow block sm:inline">KANAUJIA</span>
+          <span className="gradient-cyan text-glow">Kushagra Kanaujia</span>
         </motion.h1>
 
-        {/* Role One-Liner */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-          className="text-lg sm:text-2xl md:text-3xl lg:text-4xl text-white/90 mb-8 sm:mb-10 font-light px-4"
-        >
-          <TypeAnimation
-            sequence={[
-              "Building Intelligent Systems",
-              2000,
-              "ML Engineer & Full-Stack Developer",
-              2000,
-              "Turning Ideas Into Reality",
-              2000,
-            ]}
-            wrapper="span"
-            speed={50}
-            repeat={Infinity}
-            cursor={true}
-          />
-        </motion.div>
-
-        {/* Quick Metrics */}
+        {/* Roles */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.9 }}
-          className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 md:gap-16 max-w-3xl mx-auto mb-12"
+          transition={{ duration: 0.6, delay: 0.6 }}
+          className="text-xl sm:text-2xl md:text-3xl text-white/80 mb-12 space-y-2"
         >
-          <MetricCard number="2M+" label="Monthly Requests" delay={1.1} />
-          <MetricCard number="99.9%" label="System Uptime" delay={1.2} />
-          <MetricCard number="10+" label="Production Apps" delay={1.3} />
+          <p>Computer Science Student</p>
+          <p>Software Engineer</p>
         </motion.div>
 
-        {/* CTA Button */}
+        {/* Social Links */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 1.5 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          transition={{ duration: 0.6, delay: 0.9 }}
+          className="flex items-center justify-center gap-6 mb-12"
         >
           <a
-            href="#projects"
-            className="group relative inline-flex items-center justify-center rounded-full bg-gradient-to-r from-accent to-accent-blue px-10 py-5 text-lg font-bold text-black hover:shadow-2xl hover:shadow-accent/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent transition-all duration-300 hover:scale-110"
+            href="https://linkedin.com/in/kushagrakanaujia"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-3 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-accent/50 rounded-full transition-all duration-300"
           >
-            Explore My Work
-            <ChevronDown className="ml-2 h-6 w-6 group-hover:translate-y-1 transition-transform" />
+            <Linkedin className="w-5 h-5 text-accent" />
+            <span className="text-white/80 group-hover:text-white">LinkedIn</span>
+          </a>
+          <a
+            href="https://github.com/KushagraKanaujia"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-3 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-accent/50 rounded-full transition-all duration-300"
+          >
+            <Github className="w-5 h-5 text-accent" />
+            <span className="text-white/80 group-hover:text-white">GitHub</span>
           </a>
         </motion.div>
 
-        {/* Intent Line */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 1.7 }}
-          className="mt-10 text-base sm:text-lg text-white/70 max-w-2xl mx-auto"
+        {/* View Work Button */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 1.2 }}
         >
-          UC Santa Barbara '26 • ML Research Intern @ Visual Layer
-        </motion.p>
+          <a
+            href="#projects"
+            className="group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-accent to-accent-blue rounded-full text-lg font-semibold text-black hover:shadow-2xl hover:shadow-accent/60 transition-all duration-300 hover:scale-105"
+          >
+            <span>View My Work</span>
+            <ArrowDown className="w-5 h-5 group-hover:translate-y-1 transition-transform" />
+          </a>
+        </motion.div>
       </div>
-
-      {/* Scroll Indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2, duration: 0.5 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce"
-      >
-        <div className="flex flex-col items-center gap-2">
-          <span className="text-sm text-accent/70 font-medium">Scroll to Explore</span>
-          <ChevronDown className="w-6 h-6 text-accent/70" />
-        </div>
-      </motion.div>
     </section>
-  );
-}
-
-function MetricCard({ number, label, delay }: { number: string; label: string; delay: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.5 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.3, delay, type: "spring", stiffness: 400 }}
-      className="text-center py-4 sm:py-0"
-    >
-      <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold gradient-cyan mb-1 sm:mb-2 text-glow">
-        {number}
-      </div>
-      <div className="text-xs sm:text-sm text-white/70 uppercase tracking-wider whitespace-nowrap">
-        {label}
-      </div>
-    </motion.div>
   );
 }
