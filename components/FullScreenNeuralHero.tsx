@@ -218,10 +218,10 @@ export default function FullScreenNeuralHero() {
           initial={{ opacity: 0, y: 30, scale: 0.9 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className="text-6xl sm:text-8xl md:text-9xl font-bold tracking-tight mb-6"
+          className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-bold tracking-tight mb-4 sm:mb-6 leading-tight"
         >
           KUSHAGRA{" "}
-          <span className="gradient-cyan text-glow">KANAUJIA</span>
+          <span className="gradient-cyan text-glow block sm:inline">KANAUJIA</span>
         </motion.h1>
 
         {/* Role One-Liner */}
@@ -229,7 +229,7 @@ export default function FullScreenNeuralHero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.6 }}
-          className="text-2xl sm:text-3xl md:text-4xl text-white/90 mb-10 font-light"
+          className="text-lg sm:text-2xl md:text-3xl lg:text-4xl text-white/90 mb-8 sm:mb-10 font-light px-4"
         >
           <TypeAnimation
             sequence={[
@@ -252,7 +252,7 @@ export default function FullScreenNeuralHero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.9 }}
-          className="grid grid-cols-3 gap-8 sm:gap-16 max-w-3xl mx-auto mb-12"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 md:gap-16 max-w-3xl mx-auto mb-12"
         >
           <MetricCard number="2M+" label="Monthly Requests" delay={1.1} />
           <MetricCard number="99.9%" label="System Uptime" delay={1.2} />
@@ -308,12 +308,14 @@ function MetricCard({ number, label, delay }: { number: string; label: string; d
       initial={{ opacity: 0, scale: 0.5 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3, delay, type: "spring", stiffness: 400 }}
-      className="text-center"
+      className="text-center py-4 sm:py-0"
     >
-      <div className="text-4xl sm:text-5xl md:text-6xl font-bold gradient-cyan mb-2 text-glow">
+      <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold gradient-cyan mb-1 sm:mb-2 text-glow">
         {number}
       </div>
-      <div className="text-xs sm:text-sm text-white/70 uppercase tracking-wider">{label}</div>
+      <div className="text-xs sm:text-sm text-white/70 uppercase tracking-wider whitespace-nowrap">
+        {label}
+      </div>
     </motion.div>
   );
 }

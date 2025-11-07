@@ -49,6 +49,13 @@ export default function NavigationBar({ onOpenCommand, onOpenGame }: NavigationB
     };
   }, []);
 
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   return (
     <motion.nav
       initial={{ y: -100 }}
@@ -56,61 +63,51 @@ export default function NavigationBar({ onOpenCommand, onOpenGame }: NavigationB
       transition={{ duration: 0.3 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-black/60 backdrop-blur-xl border-b border-white/10"
-          : "bg-transparent"
+          ? "bg-black/80 backdrop-blur-xl border-b border-white/10"
+          : "bg-black/40 backdrop-blur-sm"
       }`}
     >
-      <div className="wrap flex h-16 items-center justify-between">
-        {/* Game Button */}
-        <div className="flex items-center gap-3">
-          <motion.button
-            onClick={onOpenGame}
-            whileHover={{ scale: 1.1, rotate: [0, -10, 10, -10, 0] }}
-            whileTap={{ scale: 0.95 }}
-            className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg shadow-purple-500/30 flex items-center justify-center hover:shadow-purple-500/50 transition-shadow"
-          >
-            <Gamepad2 className="w-5 h-5 text-white" />
-          </motion.button>
-          <span className="text-xl font-semibold tracking-tight hover:text-accent transition-colors hidden sm:block">
-            Kushagra<span className="text-accent">.</span>
-          </span>
-        </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="flex h-16 items-center justify-between gap-4">
+          {/* Left: Section Navigation Links */}
+          <div className="flex items-center gap-2 sm:gap-4">
+            {["About", "Experience", "Skills", "Projects"].map((section) => (
+              <button
+                key={section}
+                onClick={() => scrollToSection(section.toLowerCase())}
+                className={`text-xs sm:text-sm font-medium transition-all px-2 py-1 rounded-lg ${
+                  active === section.toLowerCase()
+                    ? "text-accent bg-accent/10"
+                    : "text-white/70 hover:text-white hover:bg-white/5"
+                }`}
+              >
+                {section}
+              </button>
+            ))}
+          </div>
 
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-8">
-          {SECTIONS.map((section) => (
-            <a
-              key={section}
-              href={`#${section}`}
-              className={`capitalize text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-sm px-2 py-1 ${
-                active === section
-                  ? "text-accent"
-                  : "text-white/70 hover:text-white"
-              }`}
+          {/* Right: Game + Commands */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            <motion.button
+              onClick={onOpenGame}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg shadow-purple-500/30 flex items-center justify-center hover:shadow-purple-500/50 transition-shadow"
+              title="Play Game"
             >
-              {section}
-              {active === section && (
-                <motion.div
-                  layoutId="activeSection"
-                  className="h-0.5 bg-accent mt-1 rounded-full"
-                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                />
-              )}
-            </a>
-          ))}
-        </div>
+              <Gamepad2 className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+            </motion.button>
 
-        {/* Command Palette Trigger */}
-        <button
-          onClick={onOpenCommand}
-          className="group flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-sm text-gray-400 transition-all hover:border-accent/50 hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-        >
-          <Command className="h-4 w-4" />
-          <span className="hidden sm:inline">Commands</span>
-          <kbd className="hidden lg:inline-block ml-2 rounded bg-white/10 px-1.5 py-0.5 text-xs text-gray-500 group-hover:bg-accent/20 group-hover:text-accent">
-            ⌘K
-          </kbd>
-        </button>
+            <button
+              onClick={onOpenCommand}
+              className="group flex items-center gap-1.5 sm:gap-2 rounded-full border border-white/10 px-2.5 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm text-gray-400 transition-all hover:border-accent/50 hover:bg-white/5"
+              title="Open Commands (⌘K)"
+            >
+              <Command className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">⌘K</span>
+            </button>
+          </div>
+        </div>
       </div>
     </motion.nav>
   );
