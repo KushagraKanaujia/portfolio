@@ -2,16 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Command, Gamepad2 } from "lucide-react";
 
 const SECTIONS = ["home", "about", "experience", "skills", "projects", "contact"];
 
-interface NavigationBarProps {
-  onOpenCommand: () => void;
-  onOpenGame: () => void;
-}
-
-export default function NavigationBar({ onOpenCommand, onOpenGame }: NavigationBarProps) {
+export default function NavigationBar() {
   const [active, setActive] = useState("home");
   const [scrolled, setScrolled] = useState(false);
 
@@ -68,19 +62,8 @@ export default function NavigationBar({ onOpenCommand, onOpenGame }: NavigationB
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 sm:px-8">
-        <div className="flex h-20 items-center justify-between gap-4">
-          {/* Left: Game Button */}
-          <motion.button
-            onClick={onOpenGame}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            className="w-11 h-11 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg shadow-purple-500/30 flex items-center justify-center hover:shadow-purple-500/50 transition-shadow"
-            title="Play Game"
-          >
-            <Gamepad2 className="w-5 h-5 text-white" />
-          </motion.button>
-
-          {/* Right: Section Navigation Links */}
+        <div className="flex h-20 items-center justify-end gap-4">
+          {/* Section Navigation Links */}
           <div className="flex items-center gap-6 sm:gap-8">
             {["About", "Experience", "Skills", "Projects"].map((section) => (
               <button

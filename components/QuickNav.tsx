@@ -22,10 +22,10 @@ export default function QuickNav() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.5, delay: 0.5 }}
-      className="fixed top-24 left-1/2 -translate-x-1/2 z-40 hidden lg:block"
+      className="fixed top-24 right-6 z-40 hidden lg:block"
     >
       <div className="glass-card px-6 py-3 rounded-full border border-white/10">
         <div className="flex items-center gap-1">

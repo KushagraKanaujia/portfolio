@@ -22,7 +22,7 @@ export default function FullScreenNeuralHero() {
     };
     setCanvasSize();
 
-    // Optimized particle system - 80 particles instead of 150
+    // Enhanced particle system - more evenly distributed
     const particles: Array<{
       x: number;
       y: number;
@@ -32,28 +32,28 @@ export default function FullScreenNeuralHero() {
       vy: number;
       size: number;
       opacity: number;
+      glow: number;
     }> = [];
 
-    const particleCount = 80; // Reduced from 150
+    const particleCount = 100; // Increased for better coverage
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
 
-    // Create particles with initial scatter positions
+    // Create particles across entire screen for better visual coverage
     for (let i = 0; i < particleCount; i++) {
-      const angle = (Math.PI * 2 * i) / particleCount;
-      const radius = Math.random() * 250 + 150;
-      const baseX = centerX + Math.cos(angle) * radius;
-      const baseY = centerY + Math.sin(angle) * radius;
+      const baseX = Math.random() * canvas.width;
+      const baseY = Math.random() * canvas.height;
 
       particles.push({
-        x: centerX,
-        y: centerY,
+        x: baseX,
+        y: baseY,
         baseX,
         baseY,
         vx: 0,
         vy: 0,
-        size: Math.random() * 2.5 + 1.5,
-        opacity: Math.random() * 0.5 + 0.5,
+        size: Math.random() * 2 + 1,
+        opacity: Math.random() * 0.6 + 0.4,
+        glow: 0,
       });
     }
 
@@ -75,97 +75,108 @@ export default function FullScreenNeuralHero() {
 
     const animate = () => {
       const now = Date.now();
-      const deltaTime = Math.min((now - lastTime) / 16, 2); // Cap delta for consistent speed
+      const deltaTime = Math.min((now - lastTime) / 16, 2);
       lastTime = now;
 
-      const elapsed = now - startTime;
-      const scatterProgress = Math.min(elapsed / 1500, 1); // Faster: 1.5s instead of 2s
+      const time = (now - startTime) * 0.001;
 
-      // Clear with slight trail for smoothness
-      ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+      // Clear with darker trail for cleaner look
+      ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      const time = elapsed * 0.001;
-
       particles.forEach((particle, i) => {
-        // Scatter animation (faster easing)
-        if (scatterProgress < 1) {
-          const ease = 1 - Math.pow(1 - scatterProgress, 2); // Faster easing
-          particle.x = centerX + (particle.baseX - centerX) * ease;
-          particle.y = centerY + (particle.baseY - centerY) * ease;
+        // Mouse influence - enlarge and glow particles near cursor (like Suhrit's)
+        const dx = mouseRef.current.x - particle.x;
+        const dy = mouseRef.current.y - particle.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        // Enhanced mouse responsiveness
+        if (distance < 150) {
+          const force = (150 - distance) / 150;
+          particle.glow = force;
+
+          // Slight attraction to cursor
+          particle.vx += (dx / distance) * force * 0.5;
+          particle.vy += (dy / distance) * force * 0.5;
         } else {
-          // Mouse influence - particles react to mouse speed
-          const dx = mouseRef.current.x - particle.x;
-          const dy = mouseRef.current.y - particle.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-
-          if (distance < 200) {
-            const force = (200 - distance) / 200;
-            const speed = Math.sqrt(mouseRef.current.vx ** 2 + mouseRef.current.vy ** 2);
-            const influence = force * speed * 0.02;
-
-            particle.vx += (dx / distance) * influence;
-            particle.vy += (dy / distance) * influence;
-          }
-
-          // Apply velocity
-          particle.vx *= 0.95; // Damping
-          particle.vy *= 0.95;
-
-          // Floating motion + velocity
-          particle.x += Math.sin(time + i * 0.5) * 0.3 + particle.vx * deltaTime;
-          particle.y += Math.cos(time + i * 0.5) * 0.3 + particle.vy * deltaTime;
-
-          // Boundary bounce
-          const margin = 50;
-          if (particle.x < margin || particle.x > canvas.width - margin) {
-            particle.vx *= -0.5;
-            particle.x = Math.max(margin, Math.min(canvas.width - margin, particle.x));
-          }
-          if (particle.y < margin || particle.y > canvas.height - margin) {
-            particle.vy *= -0.5;
-            particle.y = Math.max(margin, Math.min(canvas.height - margin, particle.y));
-          }
-
-          // Gentle pull back to base position
-          const backForce = 0.005;
-          particle.vx += (particle.baseX - particle.x) * backForce;
-          particle.vy += (particle.baseY - particle.y) * backForce;
+          particle.glow *= 0.95; // Fade out glow
         }
 
-        // Draw connections (optimized - only check nearby particles)
-        if (scatterProgress >= 1) {
-          for (let j = i + 1; j < Math.min(i + 15, particles.length); j++) {
-            const other = particles[j];
-            const dx = other.x - particle.x;
-            const dy = other.y - particle.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+        // Apply velocity with damping
+        particle.vx *= 0.92;
+        particle.vy *= 0.92;
 
-            if (distance < 120) { // Reduced from 150
-              const opacity = (1 - distance / 120) * 0.25;
+        // Gentle floating motion
+        particle.x += Math.sin(time + i * 0.3) * 0.2 + particle.vx * deltaTime;
+        particle.y += Math.cos(time + i * 0.4) * 0.2 + particle.vy * deltaTime;
+
+        // Soft boundary constraints
+        const margin = 20;
+        if (particle.x < margin) particle.x = margin;
+        if (particle.x > canvas.width - margin) particle.x = canvas.width - margin;
+        if (particle.y < margin) particle.y = margin;
+        if (particle.y > canvas.height - margin) particle.y = canvas.height - margin;
+
+        // Gentle pull back to base position
+        const backForce = 0.002;
+        particle.vx += (particle.baseX - particle.x) * backForce;
+        particle.vy += (particle.baseY - particle.y) * backForce;
+
+        // Draw connections with cleaner appearance
+        particles.forEach((other, j) => {
+          if (i >= j) return;
+          const dx = other.x - particle.x;
+          const dy = other.y - particle.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < 150) {
+            const opacity = (1 - dist / 150) * 0.2;
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(0, 217, 255, ${opacity})`;
+            ctx.lineWidth = 1;
+            ctx.moveTo(particle.x, particle.y);
+            ctx.lineTo(other.x, other.y);
+            ctx.stroke();
+
+            // Pulsing energy along connections
+            if (Math.random() < 0.005) {
+              const pulseX = particle.x + dx * Math.random();
+              const pulseY = particle.y + dy * Math.random();
               ctx.beginPath();
-              ctx.strokeStyle = `rgba(0, 217, 255, ${opacity})`;
-              ctx.lineWidth = 0.5;
-              ctx.moveTo(particle.x, particle.y);
-              ctx.lineTo(other.x, other.y);
-              ctx.stroke();
+              ctx.arc(pulseX, pulseY, 2, 0, Math.PI * 2);
+              ctx.fillStyle = `rgba(0, 217, 255, ${opacity * 3})`;
+              ctx.fill();
             }
           }
+        });
+
+        // Draw particle with enhanced glow effect
+        const glowSize = particle.size * (1 + particle.glow * 2);
+        const glowOpacity = particle.opacity * (1 + particle.glow * 0.5);
+
+        // Outer glow
+        if (particle.glow > 0.1) {
+          ctx.beginPath();
+          ctx.arc(particle.x, particle.y, glowSize * 3, 0, Math.PI * 2);
+          const gradient = ctx.createRadialGradient(
+            particle.x, particle.y, 0,
+            particle.x, particle.y, glowSize * 3
+          );
+          gradient.addColorStop(0, `rgba(0, 217, 255, ${particle.glow * 0.3})`);
+          gradient.addColorStop(1, "rgba(0, 217, 255, 0)");
+          ctx.fillStyle = gradient;
+          ctx.fill();
         }
 
-        // Draw particle with glow
+        // Core particle
         ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(0, 217, 255, ${particle.opacity})`;
-        ctx.shadowBlur = 10;
+        ctx.arc(particle.x, particle.y, glowSize, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0, 217, 255, ${glowOpacity})`;
+        ctx.shadowBlur = 15 * (1 + particle.glow);
         ctx.shadowColor = "#00d9ff";
         ctx.fill();
         ctx.shadowBlur = 0;
       });
-
-      // Decay mouse velocity
-      mouseRef.current.vx *= 0.95;
-      mouseRef.current.vy *= 0.95;
 
       animationFrame = requestAnimationFrame(animate);
     };
@@ -175,14 +186,12 @@ export default function FullScreenNeuralHero() {
     // Handle resize
     const handleResize = () => {
       setCanvasSize();
-      // Recalculate base positions
-      const newCenterX = canvas.width / 2;
-      const newCenterY = canvas.height / 2;
-      particles.forEach((particle, i) => {
-        const angle = (Math.PI * 2 * i) / particleCount;
-        const radius = Math.random() * 250 + 150;
-        particle.baseX = newCenterX + Math.cos(angle) * radius;
-        particle.baseY = newCenterY + Math.sin(angle) * radius;
+      // Recalculate base positions across entire screen
+      particles.forEach((particle) => {
+        particle.baseX = Math.random() * canvas.width;
+        particle.baseY = Math.random() * canvas.height;
+        particle.x = particle.baseX;
+        particle.y = particle.baseY;
       });
     };
 
@@ -207,17 +216,17 @@ export default function FullScreenNeuralHero() {
         style={{ willChange: "transform" }}
       />
 
-      {/* Dark Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80 pointer-events-none" />
+      {/* Dark Gradient Overlay - cleaner and more subtle */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/70 pointer-events-none" />
 
       {/* Content */}
-      <div className="relative z-10 text-center px-6 max-w-4xl">
+      <div className="relative z-10 text-center px-6 max-w-7xl">
         {/* Name */}
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-bold tracking-tight mb-6 leading-tight"
+          className="text-6xl sm:text-8xl md:text-9xl lg:text-[10rem] xl:text-[12rem] font-bold tracking-tight mb-8 leading-tight"
         >
           <span className="gradient-cyan text-glow">Kushagra Kanaujia</span>
         </motion.h1>
@@ -227,7 +236,7 @@ export default function FullScreenNeuralHero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
-          className="text-xl sm:text-2xl md:text-3xl text-white/80 mb-12 space-y-2"
+          className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-white/80 mb-12 space-y-3"
         >
           <p>Computer Science Student</p>
           <p>Software Engineer</p>

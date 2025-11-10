@@ -31,19 +31,19 @@ export default function NeuralBackground() {
     updateSize();
     window.addEventListener("resize", updateSize);
 
-    // Initialize nodes
-    const nodeCount = 50;
+    // Initialize nodes with better distribution
+    const nodeCount = 60;
     nodesRef.current = Array.from({ length: nodeCount }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      vx: (Math.random() - 0.5) * 0.5,
-      vy: (Math.random() - 0.5) * 0.5,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
       connections: [],
     }));
 
-    // Animation loop
+    // Animation loop with cleaner rendering
     const animate = () => {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+      ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       const nodes = nodesRef.current;
@@ -70,53 +70,53 @@ export default function NeuralBackground() {
           const dy = other.y - node.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
 
-          if (distance < 120) {
+          if (distance < 140) {
             node.connections.push(j);
-            const opacity = (1 - distance / 120) * 0.5;
+            const opacity = (1 - distance / 140) * 0.3;
 
-            // Gradient line
-            const gradient = ctx.createLinearGradient(node.x, node.y, other.x, other.y);
-            gradient.addColorStop(0, `rgba(0, 217, 255, ${opacity})`);
-            gradient.addColorStop(0.5, `rgba(168, 85, 247, ${opacity})`);
-            gradient.addColorStop(1, `rgba(0, 217, 255, ${opacity})`);
-
-            ctx.strokeStyle = gradient;
-            ctx.lineWidth = 1;
+            // Cleaner cyan line
+            ctx.strokeStyle = `rgba(0, 217, 255, ${opacity})`;
+            ctx.lineWidth = 0.8;
             ctx.beginPath();
             ctx.moveTo(node.x, node.y);
             ctx.lineTo(other.x, other.y);
             ctx.stroke();
 
-            // Animated pulse
-            if (Math.random() < 0.01) {
+            // Subtle animated pulse
+            if (Math.random() < 0.008) {
               const pulseX = node.x + dx * Math.random();
               const pulseY = node.y + dy * Math.random();
 
-              ctx.fillStyle = `rgba(0, 217, 255, ${opacity * 2})`;
+              ctx.fillStyle = `rgba(0, 217, 255, ${opacity * 2.5})`;
               ctx.beginPath();
-              ctx.arc(pulseX, pulseY, 3, 0, Math.PI * 2);
+              ctx.arc(pulseX, pulseY, 2, 0, Math.PI * 2);
               ctx.fill();
             }
           }
         });
 
-        // Draw node
-        const nodeSize = 2 + node.connections.length * 0.5;
-        const gradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, nodeSize * 2);
-        gradient.addColorStop(0, "rgba(0, 217, 255, 1)");
-        gradient.addColorStop(0.5, "rgba(168, 85, 247, 0.8)");
+        // Draw node with cleaner glow
+        const nodeSize = 1.5 + node.connections.length * 0.4;
+
+        // Outer glow
+        const gradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, nodeSize * 3);
+        gradient.addColorStop(0, "rgba(0, 217, 255, 0.8)");
+        gradient.addColorStop(0.5, "rgba(0, 217, 255, 0.3)");
         gradient.addColorStop(1, "rgba(0, 217, 255, 0)");
 
         ctx.fillStyle = gradient;
         ctx.beginPath();
-        ctx.arc(node.x, node.y, nodeSize * 2, 0, Math.PI * 2);
+        ctx.arc(node.x, node.y, nodeSize * 3, 0, Math.PI * 2);
         ctx.fill();
 
         // Core node
-        ctx.fillStyle = node.connections.length > 5 ? "#00d9ff" : "#a855f7";
+        ctx.fillStyle = "#00d9ff";
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = "#00d9ff";
         ctx.beginPath();
         ctx.arc(node.x, node.y, nodeSize, 0, Math.PI * 2);
         ctx.fill();
+        ctx.shadowBlur = 0;
       });
 
       animationRef.current = requestAnimationFrame(animate);
@@ -136,7 +136,7 @@ export default function NeuralBackground() {
     <motion.canvas
       ref={canvasRef}
       initial={{ opacity: 0 }}
-      animate={{ opacity: 0.6 }}
+      animate={{ opacity: 0.4 }}
       transition={{ duration: 1 }}
       className="absolute inset-0 w-full h-full"
       style={{ mixBlendMode: "screen" }}
