@@ -1,10 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ArrowDown, Github, Linkedin } from "lucide-react";
 import { useEffect, useRef } from "react";
 
-export default function FullScreenNeuralHero() {
+export default function StaticNeuralBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouseRef = useRef({ x: 0, y: 0, vx: 0, vy: 0 });
 
@@ -15,14 +13,14 @@ export default function FullScreenNeuralHero() {
     const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
 
-    // Set canvas size
+    // Set canvas size to full page
     const setCanvasSize = () => {
       canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      canvas.height = Math.max(document.documentElement.scrollHeight, window.innerHeight);
     };
     setCanvasSize();
 
-    // Enhanced particle system - more evenly distributed
+    // Interactive particle system
     const particles: Array<{
       x: number;
       y: number;
@@ -35,9 +33,9 @@ export default function FullScreenNeuralHero() {
       glow: number;
     }> = [];
 
-    const particleCount = 100; // Increased for better coverage
+    const particleCount = 150;
 
-    // Create particles across entire screen for better visual coverage
+    // Create particles across entire page
     for (let i = 0; i < particleCount; i++) {
       const baseX = Math.random() * canvas.width;
       const baseY = Math.random() * canvas.height;
@@ -62,7 +60,7 @@ export default function FullScreenNeuralHero() {
     // Mouse tracking with velocity
     const handleMouseMove = (e: MouseEvent) => {
       const newX = e.clientX;
-      const newY = e.clientY;
+      const newY = e.clientY + window.scrollY;
       mouseRef.current.vx = (newX - mouseRef.current.x) * 0.5;
       mouseRef.current.vy = (newY - mouseRef.current.y) * 0.5;
       mouseRef.current.x = newX;
@@ -130,7 +128,7 @@ export default function FullScreenNeuralHero() {
           if (dist < 150) {
             const opacity = (1 - dist / 150) * 0.2;
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(0, 217, 255, ${opacity})`; // Cyan for dark mode
+            ctx.strokeStyle = `rgba(0, 217, 255, ${opacity})`;
             ctx.lineWidth = 1;
             ctx.moveTo(particle.x, particle.y);
             ctx.lineTo(other.x, other.y);
@@ -181,10 +179,10 @@ export default function FullScreenNeuralHero() {
 
     animate();
 
-    // Handle resize
+    // Redraw on resize
     const handleResize = () => {
       setCanvasSize();
-      // Recalculate base positions across entire screen
+      // Recalculate particle positions
       particles.forEach((particle) => {
         particle.baseX = Math.random() * canvas.width;
         particle.baseY = Math.random() * canvas.height;
@@ -203,81 +201,12 @@ export default function FullScreenNeuralHero() {
   }, []);
 
   return (
-    <section
-      id="home"
-      className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black"
-    >
-      {/* Full-Screen Neural Network Canvas */}
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full"
-        style={{ willChange: "transform", zIndex: 0 }}
-        aria-hidden="true"
-        role="presentation"
-      />
-
-      {/* Content */}
-      <div className="relative z-50 text-center px-4 w-full flex flex-col items-center">
-        {/* Name - BRIGHT WHITE - Large and Visible */}
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="font-bold tracking-tight leading-none mb-8 drop-shadow-[0_0_60px_rgba(255,255,255,1)]"
-          style={{
-            fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-            fontSize: 'clamp(2.5rem, 5vw, 3.5rem)',
-            color: '#FFFFFF',
-            textShadow: '0 0 25px rgba(255,255,255,0.8), 0 0 15px rgba(255,255,255,0.5)',
-            filter: 'brightness(1.2)'
-          }}
-        >
-          Kushagra Kanaujia
-        </motion.h1>
-
-        {/* Subtitle - BRIGHT */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="mb-12 font-semibold"
-          style={{
-            fontSize: 'clamp(1.2rem, 2.5vw, 1.5rem)',
-            color: '#FFFFFF',
-            textShadow: '0 0 25px rgba(255,255,255,0.8), 0 0 15px rgba(255,255,255,0.5)',
-            filter: 'brightness(1.2)'
-          }}
-        >
-          Computer Science Student & Software Engineer
-        </motion.p>
-
-        {/* Social Icons - Clean and Professional */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="flex items-center justify-center gap-6"
-        >
-          <a
-            href="https://www.linkedin.com/in/kushagra-kanaujia"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="LinkedIn"
-            className="group p-5 bg-white rounded-full transition-all duration-300 hover:scale-110 hover:shadow-2xl hover:shadow-white/50"
-          >
-            <Linkedin className="w-7 h-7 text-blue-600" aria-hidden="true" />
-          </a>
-          <a
-            href="https://github.com/KushagraKanaujia"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="GitHub"
-            className="group p-5 bg-white rounded-full transition-all duration-300 hover:scale-110 hover:shadow-2xl hover:shadow-white/50"
-          >
-            <Github className="w-7 h-7 text-black" aria-hidden="true" />
-          </a>
-        </motion.div>
-      </div>
-    </section>
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 w-full h-full pointer-events-none"
+      style={{ zIndex: -1 }}
+      aria-hidden="true"
+      role="presentation"
+    />
   );
 }

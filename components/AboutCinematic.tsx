@@ -1,112 +1,114 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { TrendingUp } from "lucide-react";
-import FloatingShapes from "./FloatingShapes";
-import NeuralBackground from "./NeuralBackground";
-import FloatingTechIcons from "./FloatingTechIcons";
 
 export default function AboutCinematic() {
   return (
     <section
       id="about"
-      className="min-h-screen flex items-center bg-gradient-to-b from-black via-neutral-950 to-black py-20 relative overflow-hidden"
+      className="min-h-screen flex items-center bg-black py-20 relative overflow-hidden"
     >
-      {/* Animated Backgrounds */}
-      <NeuralBackground />
-      <FloatingShapes />
-      <FloatingTechIcons />
+      {/* Content background for visibility */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="w-full max-w-4xl min-h-[60vh] bg-black/60 backdrop-blur-sm rounded-3xl border border-white/5" />
+      </div>
 
-      {/* Radial gradient overlay for depth */}
-      <div className="absolute inset-0 bg-radial-gradient from-transparent via-black/40 to-black pointer-events-none" />
-
-      <div className="w-full px-4 relative z-10 flex justify-center">
-        <div className="max-w-5xl">
-          {/* Section Title - Center Aligned */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
+      <div className="w-full max-w-4xl mx-auto px-4 relative z-10">
+        <div className="text-center space-y-6">
+          {/* Title */}
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.4 }}
-            className="mb-16 text-center"
+            transition={{ delay: 0.2 }}
+            className="font-bold"
+            style={{
+              fontSize: '2.5rem',
+              color: '#FFFFFF',
+              textShadow: '0 0 25px rgba(255,255,255,0.8), 0 0 15px rgba(255,255,255,0.5)',
+              filter: 'brightness(1.2)'
+            }}
           >
-            <motion.p
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="text-accent text-base md:text-lg font-medium mb-6 tracking-wider uppercase"
-            >
-              About Me
-            </motion.p>
-            <h2 className="text-6xl md:text-8xl lg:text-9xl font-bold text-white">
-              Who I Am
-            </h2>
+            About Me
+          </motion.h2>
+
+          {/* Subtitle */}
+          <motion.h3
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+            className="font-bold"
+            style={{
+              fontSize: '1.8rem',
+              lineHeight: '1.4',
+              color: '#FFFFFF',
+              textShadow: '0 0 25px rgba(255,255,255,0.8), 0 0 15px rgba(255,255,255,0.5)',
+              filter: 'brightness(1.2)'
+            }}
+          >
+            Backend Engineer &{' '}
+            <span style={{ color: '#fb923c' }}>System Architect</span>
+          </motion.h3>
+
+          {/* Description paragraphs */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+            className="font-medium"
+            style={{
+              fontSize: '1.1rem',
+              lineHeight: '1.8',
+              color: '#FFFFFF',
+              textShadow: '0 0 25px rgba(255,255,255,0.8), 0 0 15px rgba(255,255,255,0.5)',
+              filter: 'brightness(1.2)'
+            }}
+          >
+            Hello! I'm Kushagra, a passionate Computer Science student at UC Santa Barbara with a strong foundation in software engineering, cloud infrastructure, and full-stack development. My journey spans from building scalable web applications to developing intelligent data processing systems and mobile platforms that serve thousands of users.
+          </motion.p>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 }}
+            className="font-medium"
+            style={{
+              fontSize: '1.1rem',
+              lineHeight: '1.8',
+              color: '#FFFFFF',
+              textShadow: '0 0 25px rgba(255,255,255,0.8), 0 0 15px rgba(255,255,255,0.5)',
+              filter: 'brightness(1.2)'
+            }}
+          >
+            I thrive in challenging environments where I can apply my technical expertise to solve complex problems. Whether it's architecting scalable backend systems, developing machine learning pipelines, or building full-stack applications, I'm driven by the opportunity to create impactful technology that makes a difference. My disciplined approach to engineering ensures robust, maintainable solutions that stand the test of production environments.
+          </motion.p>
+
+          {/* Key highlights */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.6 }}
+            className="flex flex-wrap gap-3 pt-4 justify-center"
+          >
+            {['Backend Engineer', 'Full-Stack Dev', 'ML Infrastructure', 'System Design'].map((tag, index) => (
+              <span
+                key={index}
+                className="px-6 py-3 font-bold bg-gradient-to-r from-orange-500 to-amber-500 rounded-full shadow-xl border-2 border-orange-300"
+                style={{
+                  fontSize: '0.9rem',
+                  color: '#FFFFFF',
+                  textShadow: '0 0 25px rgba(255,255,255,0.8), 0 0 15px rgba(255,255,255,0.5)',
+                  filter: 'brightness(1.2)'
+                }}
+              >
+                {tag}
+              </span>
+            ))}
           </motion.div>
-
-          {/* Content - Center Aligned */}
-          <div className="text-center">
-            {/* Story */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="space-y-10"
-            >
-              <motion.h3
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2, duration: 0.4 }}
-                className="text-6xl md:text-7xl lg:text-8xl font-bold text-white leading-tight"
-              >
-                Backend Engineer.
-                <br />
-                <span className="text-accent">System Architect.</span>
-              </motion.h3>
-
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.3, duration: 0.4 }}
-                className="text-2xl md:text-3xl lg:text-4xl text-gray-300 leading-relaxed"
-              >
-                Building scalable infrastructure at production startups.
-                Specializing in high-performance APIs and distributed systems.
-              </motion.p>
-
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.4, duration: 0.4 }}
-                className="text-xl md:text-2xl lg:text-3xl text-gray-400 leading-relaxed"
-              >
-                Senior at UC Santa Barbara, graduating December 2026.
-                <br />
-                3 SWE internships. 2M+ monthly API requests. 99.9% uptime.
-              </motion.p>
-
-              {/* CTA */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.5, duration: 0.4 }}
-                className="pt-8 flex justify-center"
-              >
-                <a
-                  href="#contact"
-                  className="inline-flex items-center gap-4 px-10 py-5 bg-gradient-to-r from-accent to-accent-blue rounded-full text-xl md:text-2xl font-bold text-black hover:scale-105 hover:shadow-2xl hover:shadow-accent/60 transition-all duration-300"
-                >
-                  Let's Build Together
-                  <TrendingUp className="w-7 h-7 md:w-8 md:h-8" />
-                </a>
-              </motion.div>
-            </motion.div>
-          </div>
         </div>
       </div>
     </section>

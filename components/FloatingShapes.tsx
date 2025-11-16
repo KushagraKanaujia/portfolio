@@ -12,7 +12,7 @@ export default function FloatingShapes() {
   ];
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
+    <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-10">
       {shapes.map((shape, i) => (
         <motion.div
           key={i}
@@ -28,7 +28,7 @@ export default function FloatingShapes() {
             x: [0, Math.random() * 100 - 50, 0],
             y: [0, Math.random() * 100 - 50, 0],
             scale: [1, 1.2, 1],
-            opacity: [0.3, 0.6, 0.3],
+            opacity: [0.2, 0.4, 0.2],
           }}
           transition={{
             duration: 15 + Math.random() * 10,

@@ -136,7 +136,7 @@ export default function NeuralBackground() {
     <motion.canvas
       ref={canvasRef}
       initial={{ opacity: 0 }}
-      animate={{ opacity: 0.4 }}
+      animate={{ opacity: 0.2 }}
       transition={{ duration: 1 }}
       className="absolute inset-0 w-full h-full"
       style={{ mixBlendMode: "screen" }}

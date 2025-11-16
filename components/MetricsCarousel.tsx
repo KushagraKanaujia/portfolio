@@ -87,32 +87,42 @@ const MetricsCarousel = () => {
   return (
     <section
       ref={ref}
-      className="min-h-screen flex items-center bg-gradient-to-b from-black via-neutral-950 to-black py-20 relative overflow-hidden"
+      className="min-h-screen flex items-center bg-black py-20 relative overflow-hidden"
     >
       {/* Radial gradient overlay for depth */}
       <div className="absolute inset-0 bg-gradient-radial from-transparent via-black/50 to-black pointer-events-none" />
 
+      {/* Content background for visibility */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="w-full max-w-6xl h-[80vh] bg-black/60 backdrop-blur-sm rounded-3xl border border-white/10" />
+      </div>
+
       <div className="w-full max-w-5xl mx-auto text-center px-4 relative z-10">
-        {/* Heading - Fast entrance */}
+        {/* Heading - BRIGHT and visible */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
-          className="mb-16"
+          className="mb-24"
         >
           <motion.div
             initial={{ scale: 0 }}
             whileInView={{ scale: 1 }}
             viewport={{ once: true }}
             transition={{ type: "spring", stiffness: 500, damping: 20, delay: 0.1 }}
-            className="inline-flex items-center gap-2 mb-4"
+            className="inline-flex items-center gap-4 mb-6"
           >
-            <Zap className="w-6 h-6 text-accent animate-pulse" />
-            <h2 className="text-4xl md:text-5xl font-bold gradient-text-apple">
+            <Zap className="w-10 h-10 text-orange-400 animate-pulse" />
+            <h2 className="font-bold" style={{
+              fontSize: '2.5rem',
+              color: '#FFFFFF',
+              textShadow: '0 0 25px rgba(255,255,255,0.8), 0 0 15px rgba(255,255,255,0.5)',
+              filter: 'brightness(1.2)'
+            }}>
               Impact at Scale
             </h2>
-            <Zap className="w-6 h-6 text-accent animate-pulse" />
+            <Zap className="w-10 h-10 text-orange-400 animate-pulse" />
           </motion.div>
         </motion.div>
 
@@ -129,30 +139,31 @@ const MetricsCarousel = () => {
             }}
             className="mb-12"
           >
-            {/* Icon Badge */}
+            {/* Icon Badge - Bigger */}
             <motion.div
               initial={{ scale: 0, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
               exit={{ scale: 0, rotate: 180 }}
               transition={{ duration: 0.4, type: "spring", stiffness: 300 }}
-              className="text-6xl mb-6"
+              className="text-8xl md:text-9xl mb-10"
             >
               {currentMetric.icon}
             </motion.div>
 
-            {/* Big Number - Snappy */}
-            <div className="mb-8">
+            {/* Big Number - MASSIVE and BOLD */}
+            <div className="mb-12">
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ delay: 0.1, duration: 0.3 }}
-                className={`big-number text-glow bg-gradient-to-r ${currentMetric.color} bg-clip-text text-transparent`}
+                className={`text-[10rem] md:text-[15rem] lg:text-[20rem] font-black leading-none bg-gradient-to-r ${currentMetric.color} bg-clip-text text-transparent drop-shadow-[0_0_80px_rgba(0,217,255,0.6)]`}
+                style={{ fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}
               >
                 {inView && (
                   <CountUp
                     end={currentMetric.number}
-                    duration={1.5} // Faster count
+                    duration={1.5}
                     decimals={currentMetric.suffix === "%" && currentMetric.number < 100 ? 1 : 0}
                     suffix={currentMetric.suffix}
                     separator=","
@@ -161,24 +172,36 @@ const MetricsCarousel = () => {
               </motion.div>
             </div>
 
-            {/* Label - Quick */}
+            {/* Label - Much bigger */}
             <motion.h3
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ delay: 0.15, duration: 0.3 }}
-              className="text-2xl md:text-4xl font-semibold text-white mb-4"
+              className="font-bold mb-8"
+              style={{
+                fontSize: '1.3rem',
+                color: '#FFFFFF',
+                textShadow: '0 0 25px rgba(255,255,255,0.8), 0 0 15px rgba(255,255,255,0.5)',
+                filter: 'brightness(1.2)'
+              }}
             >
               {currentMetric.label}
             </motion.h3>
 
-            {/* Description - Fast reveal */}
+            {/* Description - Bigger text */}
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ delay: 0.2, duration: 0.3 }}
-              className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto"
+              className="max-w-4xl mx-auto leading-relaxed font-medium"
+              style={{
+                fontSize: '1.1rem',
+                color: '#FFFFFF',
+                textShadow: '0 0 25px rgba(255,255,255,0.8), 0 0 15px rgba(255,255,255,0.5)',
+                filter: 'brightness(1.2)'
+              }}
             >
               {currentMetric.description}
             </motion.p>
@@ -195,8 +218,8 @@ const MetricsCarousel = () => {
           </motion.div>
         </AnimatePresence>
 
-        {/* Pagination Dots - Interactive */}
-        <div className="flex justify-center gap-3 mt-16">
+        {/* Pagination Dots - Bigger and more visible */}
+        <div className="flex justify-center gap-4 mt-20">
           {metrics.map((_, index) => (
             <motion.button
               key={index}
@@ -206,20 +229,20 @@ const MetricsCarousel = () => {
               transition={{ duration: 0.2 }}
               className={`transition-all duration-300 rounded-full ${
                 index === currentIndex
-                  ? "w-12 h-3 bg-gradient-to-r from-accent to-accent-blue shadow-lg shadow-accent/50"
-                  : "w-3 h-3 bg-gray-700 hover:bg-accent/50"
+                  ? "w-16 h-4 bg-gradient-to-r from-orange-400 to-amber-500 shadow-lg shadow-orange-400/50"
+                  : "w-4 h-4 bg-gray-700 hover:bg-orange-400/50"
               }`}
               aria-label={`Go to metric ${index + 1}`}
             />
           ))}
         </div>
 
-        {/* Navigation Hint - Subtle */}
+        {/* Navigation Hint - Bigger */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="text-sm text-gray-600 mt-8"
+          className="text-lg text-gray-400 mt-10 font-medium"
         >
           Auto-advancing every 2.5s • Click dots to navigate
         </motion.p>

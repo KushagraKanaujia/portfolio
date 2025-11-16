@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Mail, Download, Github, Linkedin, Twitter } from "lucide-react";
+import { Mail, Github, Linkedin } from "lucide-react";
 import FloatingShapes from "./FloatingShapes";
 
 const CTACinematic = () => {
@@ -17,7 +17,7 @@ const CTACinematic = () => {
           transition={{ duration: 0.8 }}
           className="mb-16"
         >
-          <h2 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 leading-tight">
+          <h2 className="font-bold mb-8 leading-tight" style={{ fontSize: '2.5rem' }}>
             <span className="gradient-text-apple">Let's build</span>
             <br />
             <motion.span
@@ -39,7 +39,8 @@ const CTACinematic = () => {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
-            className="text-xl md:text-2xl text-gray-400 max-w-2xl mx-auto"
+            className="text-gray-400 max-w-2xl mx-auto"
+            style={{ fontSize: '1.1rem', lineHeight: '1.8' }}
           >
             Open to opportunities, collaborations, and conversations about technology
           </motion.p>
@@ -54,22 +55,15 @@ const CTACinematic = () => {
           className="flex flex-wrap justify-center gap-4 mb-16"
         >
           <motion.a
-            href="mailto:your-email@example.com"
+            href="mailto:kushagrakanaujia@ucsb.edu"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="btn-apple-primary flex items-center gap-2 text-lg px-8 py-4"
+            aria-label="Send me an email"
+            className="btn-apple-primary flex items-center gap-2 px-8 py-4"
+            style={{ fontSize: '1rem' }}
           >
-            <Mail className="w-6 h-6" />
+            <Mail className="w-5 h-5" aria-hidden="true" />
             Email Me
-          </motion.a>
-          <motion.a
-            href="#"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="btn-apple flex items-center gap-2 text-lg px-8 py-4"
-          >
-            <Download className="w-6 h-6" />
-            Download Resume
           </motion.a>
         </motion.div>
 
@@ -83,8 +77,7 @@ const CTACinematic = () => {
         >
           {[
             { icon: Github, href: "https://github.com/KushagraKanaujia", label: "GitHub" },
-            { icon: Linkedin, href: "https://linkedin.com/in/kushagra-kanaujia", label: "LinkedIn" },
-            { icon: Twitter, href: "https://twitter.com/kushagra", label: "Twitter" },
+            { icon: Linkedin, href: "https://www.linkedin.com/in/kushagra-kanaujia", label: "LinkedIn" },
           ].map((social, index) => (
             <motion.a
               key={index}
@@ -97,9 +90,9 @@ const CTACinematic = () => {
               transition={{ delay: 0.7 + index * 0.1 }}
               whileHover={{ y: -5, scale: 1.1 }}
               className="glass-card p-4 rounded-full hover:border-accent/50 transition-colors group"
-              aria-label={social.label}
+              aria-label={`Visit my ${social.label} profile`}
             >
-              <social.icon className="w-6 h-6 text-gray-400 group-hover:text-accent transition-colors" />
+              <social.icon className="w-6 h-6 text-gray-400 group-hover:text-accent transition-colors" aria-hidden="true" />
             </motion.a>
           ))}
         </motion.div>

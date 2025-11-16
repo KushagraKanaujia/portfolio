@@ -10,7 +10,6 @@ export default function NavigationBar() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    // Scrollspy
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -30,7 +29,6 @@ export default function NavigationBar() {
       if (element) observer.observe(element);
     });
 
-    // Scroll detection
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
     };
@@ -54,32 +52,77 @@ export default function NavigationBar() {
     <motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      transition={{ duration: 0.3 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      transition={{ duration: 0.4, delay: 0.2 }}
+      role="navigation"
+      aria-label="Main navigation"
+      className={`fixed top-0 left-0 right-0 transition-all duration-300 ${
         scrolled
-          ? "bg-black/80 backdrop-blur-xl border-b border-white/10"
-          : "bg-transparent"
+          ? "bg-black/90 backdrop-blur-2xl border-b border-white/20 shadow-lg shadow-black/50"
+          : "bg-black/40 backdrop-blur-md"
       }`}
+      style={{
+        zIndex: 100,
+        display: 'flex',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        padding: '0 32px'
+      }}
     >
-      <div className="max-w-7xl mx-auto px-6 sm:px-8">
-        <div className="flex h-20 items-center justify-end gap-4">
-          {/* Section Navigation Links */}
-          <div className="flex items-center gap-6 sm:gap-8">
-            {["About", "Experience", "Skills", "Projects"].map((section) => (
-              <button
-                key={section}
-                onClick={() => scrollToSection(section.toLowerCase())}
-                className={`text-base sm:text-lg font-medium transition-all ${
-                  active === section.toLowerCase()
-                    ? "text-accent"
-                    : "text-white/80 hover:text-white"
-                }`}
-              >
-                {section}
-              </button>
-            ))}
-          </div>
-        </div>
+      <div
+        style={{
+          display: 'flex',
+          gap: '40px',
+          alignItems: 'center',
+          height: '80px'
+        }}
+      >
+        {["About", "Experience", "Skills", "Projects"].map((section) => (
+          <button
+            key={section}
+            onClick={() => scrollToSection(section.toLowerCase())}
+            aria-label={`Navigate to ${section} section`}
+            aria-current={active === section.toLowerCase() ? "page" : undefined}
+            style={{
+              fontSize: '24px',
+              fontWeight: 'bold',
+              color: active === section.toLowerCase() ? '#00d9ff' : 'white',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              position: 'relative'
+            }}
+            onMouseEnter={(e) => {
+              if (active !== section.toLowerCase()) {
+                e.currentTarget.style.color = '#00d9ff';
+                e.currentTarget.style.transform = 'scale(1.05)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (active !== section.toLowerCase()) {
+                e.currentTarget.style.color = 'white';
+                e.currentTarget.style.transform = 'scale(1)';
+              }
+            }}
+          >
+            {section}
+            {active === section.toLowerCase() && (
+              <motion.div
+                layoutId="activeSection"
+                style={{
+                  position: 'absolute',
+                  bottom: '-4px',
+                  left: 0,
+                  right: 0,
+                  height: '2px',
+                  background: '#00d9ff',
+                  borderRadius: '9999px'
+                }}
+                transition={{ type: "spring", stiffness: 380, damping: 30 }}
+              />
+            )}
+          </button>
+        ))}
       </div>
     </motion.nav>
   );

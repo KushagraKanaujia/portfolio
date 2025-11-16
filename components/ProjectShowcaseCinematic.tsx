@@ -62,8 +62,13 @@ const ProjectShowcaseCinematic = ({
   };
 
   return (
-    <section className="min-h-screen flex items-center bg-gradient-to-b from-black via-neutral-950 to-black py-20">
-      <div className="w-full max-w-7xl mx-auto px-4">
+    <section className="min-h-screen flex items-center bg-black py-20 relative overflow-hidden">
+      {/* Content background for visibility */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="w-full max-w-7xl min-h-[85vh] bg-black/60 backdrop-blur-sm rounded-3xl border border-white/5" />
+      </div>
+
+      <div className="w-full max-w-7xl mx-auto px-4 relative z-10">
         <div className={`grid md:grid-cols-2 gap-12 items-center ${reverse ? "md:flex-row-reverse" : ""}`}>
           {/* Image / Visual Side */}
           <motion.div
@@ -99,9 +104,13 @@ const ProjectShowcaseCinematic = ({
               <div className="relative w-full h-full glass-card overflow-hidden group">
                 <Image
                   src={image}
-                  alt={title}
+                  alt={`${title} - ${subtitle}`}
                   fill
                   className="object-cover transition-all duration-500 group-hover:scale-110 group-hover:rotate-2"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
+                  quality={85}
+                  priority={false}
+                  loading="lazy"
                 />
                 {/* Animated Overlay */}
                 <motion.div
@@ -123,8 +132,8 @@ const ProjectShowcaseCinematic = ({
               </div>
             </motion.div>
 
-            {/* Floating Metrics - Fast entrance */}
-            <div className="grid grid-cols-3 gap-3 mt-6">
+            {/* Floating Metrics - Warm and vibrant */}
+            <div className="grid grid-cols-3 gap-4 mt-8">
               {metrics.map((metric, index) => (
                 <motion.div
                   key={index}
@@ -143,16 +152,30 @@ const ProjectShowcaseCinematic = ({
                     scale: 1.05,
                     transition: { duration: 0.2 }
                   }}
-                  className="glass-card p-4 text-center rounded-xl cursor-pointer group"
+                  className="bg-gradient-to-br from-orange-500/80 to-amber-500/80 border-2 border-orange-400 p-6 text-center rounded-xl cursor-pointer group backdrop-blur-sm shadow-xl"
                 >
                   <motion.div
-                    className={`text-xl md:text-2xl font-bold bg-gradient-to-r ${gradient} bg-clip-text text-transparent mb-1`}
+                    className="text-3xl md:text-4xl font-black mb-2"
                     whileHover={{ scale: 1.1 }}
                     transition={{ duration: 0.2 }}
+                    style={{
+                      color: '#FFFFFF',
+                      textShadow: '0 0 25px rgba(255,255,255,0.8), 0 0 15px rgba(255,255,255,0.5)',
+                      filter: 'brightness(1.2)'
+                    }}
                   >
                     {metric.value}
                   </motion.div>
-                  <div className="text-xs text-gray-500 group-hover:text-gray-400 transition-colors">{metric.label}</div>
+                  <div
+                    className="text-sm md:text-base font-bold group-hover:text-white transition-colors"
+                    style={{
+                      color: '#FFFFFF',
+                      textShadow: '0 0 25px rgba(255,255,255,0.8), 0 0 15px rgba(255,255,255,0.5)',
+                      filter: 'brightness(1.2)'
+                    }}
+                  >
+                    {metric.label}
+                  </div>
                 </motion.div>
               ))}
             </div>
@@ -166,47 +189,66 @@ const ProjectShowcaseCinematic = ({
             transition={{ duration: 0.4, ease: "easeOut" }}
             className={`space-y-6 ${reverse ? "md:order-1" : ""}`}
           >
-            {/* Project Type - Faster */}
+            {/* Project Type - Warmer and more visible */}
             <motion.p
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1, duration: 0.3 }}
-              className={`text-sm md:text-base font-medium tracking-wider uppercase bg-gradient-to-r ${gradient} bg-clip-text text-transparent`}
+              className="font-bold tracking-wider uppercase"
+              style={{
+                fontSize: '1rem',
+                color: '#FFFFFF',
+                textShadow: '0 0 25px rgba(255,255,255,0.8), 0 0 15px rgba(255,255,255,0.5)',
+                filter: 'brightness(1.2)'
+              }}
             >
               {subtitle}
             </motion.p>
 
-            {/* Title - Magnetic effect */}
+            {/* Title - Much bigger and vibrant */}
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.15, duration: 0.4 }}
               whileHover={{ x: 10, transition: { duration: 0.2 } }}
-              className="text-4xl md:text-6xl font-bold gradient-text-apple cursor-pointer"
+              className="font-bold cursor-pointer"
+              style={{
+                fontSize: '2.5rem',
+                color: '#FFFFFF',
+                textShadow: '0 0 25px rgba(255,255,255,0.8), 0 0 15px rgba(255,255,255,0.5)',
+                filter: 'brightness(1.2)'
+              }}
             >
               {title}
             </motion.h2>
 
-            {/* Description - Fast fade */}
+            {/* Description - Warm white and clearly visible */}
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2, duration: 0.3 }}
-              className="text-base md:text-lg text-gray-400 leading-relaxed"
+              className="leading-relaxed font-medium"
+              style={{
+                fontSize: '1.1rem',
+                lineHeight: '1.8',
+                color: '#FFFFFF',
+                textShadow: '0 0 25px rgba(255,255,255,0.8), 0 0 15px rgba(255,255,255,0.5)',
+                filter: 'brightness(1.2)'
+              }}
             >
               {description}
             </motion.p>
 
-            {/* Tech Stack - Stagger fast */}
+            {/* Tech Stack - Warmer and vibrant */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.25, duration: 0.3 }}
-              className="flex flex-wrap gap-2"
+              className="flex flex-wrap gap-3"
             >
               {tech.map((item, index) => (
                 <motion.span
@@ -223,17 +265,23 @@ const ProjectShowcaseCinematic = ({
                   whileHover={{
                     scale: 1.15,
                     y: -4,
-                    boxShadow: "0 8px 30px rgba(0, 217, 255, 0.3)",
+                    boxShadow: "0 8px 30px rgba(251, 146, 60, 0.4)",
                     transition: { duration: 0.2 }
                   }}
-                  className="px-4 py-2 text-sm font-medium glass-card rounded-full text-accent cursor-pointer"
+                  className="px-6 py-3 font-bold bg-gradient-to-r from-orange-500 to-amber-500 rounded-full cursor-pointer shadow-xl border-2 border-orange-300"
+                  style={{
+                    fontSize: '0.9rem',
+                    color: '#FFFFFF',
+                    textShadow: '0 0 25px rgba(255,255,255,0.8), 0 0 15px rgba(255,255,255,0.5)',
+                    filter: 'brightness(1.2)'
+                  }}
                 >
                   {item}
                 </motion.span>
               ))}
             </motion.div>
 
-            {/* Action Buttons - Snappy */}
+            {/* Action Buttons - Warm and vibrant */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -244,24 +292,40 @@ const ProjectShowcaseCinematic = ({
               {github && (
                 <motion.a
                   href={github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`View ${title} source code on GitHub`}
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.98 }}
                   transition={{ duration: 0.2 }}
-                  className="btn-apple flex items-center gap-2 group"
+                  className="px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 font-bold rounded-lg flex items-center gap-2 group shadow-lg hover:shadow-orange-500/50"
+                  style={{
+                    color: '#FFFFFF',
+                    textShadow: '0 0 25px rgba(255,255,255,0.8), 0 0 15px rgba(255,255,255,0.5)',
+                    filter: 'brightness(1.2)'
+                  }}
                 >
-                  <Github className="w-5 h-5 group-hover:rotate-12 transition-transform duration-200" />
+                  <Github className="w-5 h-5 group-hover:rotate-12 transition-transform duration-200" aria-hidden="true" />
                   View Code
                 </motion.a>
               )}
               {live && (
                 <motion.a
                   href={live}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`View ${title} live demo`}
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.98 }}
                   transition={{ duration: 0.2 }}
-                  className="btn-apple-primary flex items-center gap-2 group"
+                  className="px-6 py-3 bg-gradient-to-r from-amber-500 to-yellow-500 font-bold rounded-lg flex items-center gap-2 group shadow-lg hover:shadow-amber-500/50"
+                  style={{
+                    color: '#FFFFFF',
+                    textShadow: '0 0 25px rgba(255,255,255,0.8), 0 0 15px rgba(255,255,255,0.5)',
+                    filter: 'brightness(1.2)'
+                  }}
                 >
-                  <ExternalLink className="w-5 h-5 group-hover:rotate-12 transition-transform duration-200" />
+                  <ExternalLink className="w-5 h-5 group-hover:rotate-12 transition-transform duration-200" aria-hidden="true" />
                   Live Demo
                 </motion.a>
               )}

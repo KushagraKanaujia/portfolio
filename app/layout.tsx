@@ -19,14 +19,6 @@ export const metadata: Metadata = {
     description: site.description,
     url: site.url,
     siteName: site.name,
-    images: [
-      {
-        url: site.og,
-        width: 1200,
-        height: 630,
-        alt: site.name,
-      },
-    ],
     locale: "en_US",
     type: "website",
   },
@@ -34,8 +26,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: site.name,
     description: site.description,
-    images: [site.og],
-    creator: "@kushagra",
+    creator: "@KushagraKanauji",
   },
   robots: {
     index: true,
@@ -61,11 +52,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
         />
       </head>
-      <body>
+      <body className="dark">
         <ErrorBoundary>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            {children}
-          </ThemeProvider>
+          {children}
         </ErrorBoundary>
       </body>
     </html>

@@ -21,7 +21,7 @@ export default function FloatingTechIcons() {
       {techIcons.map((icon, index) => (
         <motion.div
           key={index}
-          className="absolute text-4xl opacity-20"
+          className="absolute text-4xl opacity-10"
           initial={{
             x: Math.random() * 100 - 50 + "%",
             y: Math.random() * 100 - 50 + "%",
@@ -41,7 +41,7 @@ export default function FloatingTechIcons() {
             ],
             scale: [0, 1, 1, 0],
             rotate: [0, 180, 360],
-            opacity: [0, 0.3, 0.3, 0],
+            opacity: [0, 0.15, 0.15, 0],
           }}
           transition={{
             duration: 20,
