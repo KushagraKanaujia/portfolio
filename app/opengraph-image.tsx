@@ -1,21 +1,16 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "Kushagra Kanaujia — Founder of Throttle";
+export const alt = "hey, I'm Kush";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default function OG() {
   return new ImageResponse(
     (
-      <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", background: "#08090a", color: "#f2f2f0", padding: 72, fontFamily: "sans-serif" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 14, fontSize: 24, color: "#8b8d91" }}>
-          <div style={{ width: 14, height: 14, borderRadius: 7, background: "#7cf29c" }} />
-          FOUNDER, THROTTLE
-        </div>
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ fontSize: 120, fontWeight: 700, letterSpacing: -5, lineHeight: 1 }}>Kushagra Kanaujia</div>
-          <div style={{ fontSize: 40, color: "#8b8d91", marginTop: 28 }}>Helping companies stop renting their AI.</div>
-        </div>
+      <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: 80, color: "#fff6ea", fontFamily: "serif",
+        background: "linear-gradient(180deg, #3b2a4f 0%, #7a4a6a 30%, #d9786c 55%, #ffb071 70%, #7d4a5c 72%, #2b1a2a 100%)" }}>
+        <div style={{ fontSize: 132, lineHeight: 1 }}>hey, I'm Kush.</div>
+        <div style={{ fontSize: 36, marginTop: 20, opacity: 0.85, fontFamily: "sans-serif" }}>Building things in Isla Vista, California.</div>
       </div>
     ),
     size

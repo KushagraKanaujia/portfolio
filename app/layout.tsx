@@ -1,33 +1,27 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 
-const sans = Geist({ subsets: ["latin"], variable: "--font-sans" });
-const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" });
+const sans = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const serif = Instrument_Serif({ subsets: ["latin"], weight: "400", style: ["normal", "italic"], variable: "--font-serif" });
 
-const title = "Kushagra Kanaujia";
-const description =
-  "Founder of Throttle. I help companies stop renting their AI. Software engineer, UC Santa Barbara CS.";
+const title = "Kush Kanaujia";
+const description = "Hey, I'm Kush. I build things and watch sunsets in Isla Vista, California.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://kushagrakanaujia.vercel.app"),
   title,
   description,
-  authors: [{ name: title }],
+  authors: [{ name: "Kushagra Kanaujia" }],
   openGraph: { title, description, type: "website", siteName: title },
-  twitter: { card: "summary_large_image", title, description, creator: "@KushagraKanauji" },
+  twitter: { card: "summary_large_image", title, description },
 };
 
-export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: dark)", color: "#08090a" },
-    { media: "(prefers-color-scheme: light)", color: "#f5f5f4" },
-  ],
-};
+export const viewport: Viewport = { themeColor: "#2a1a1f" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${sans.variable} ${mono.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${sans.variable} ${serif.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
       </head>
