@@ -1,63 +1,37 @@
+import type { Metadata, Viewport } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "next-themes";
-import type { Metadata } from "next";
-import { site } from "./seo";
-import ErrorBoundary from "@/components/ErrorBoundary";
+
+const sans = Geist({ subsets: ["latin"], variable: "--font-sans" });
+const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" });
+
+const title = "Kushagra Kanaujia";
+const description =
+  "Founder of Throttle. I help companies stop renting their AI. Software engineer, UC Santa Barbara CS.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(site.url),
-  title: {
-    default: site.name,
-    template: `%s · ${site.name}`,
-  },
-  description: site.description,
-  keywords: site.keywords,
-  authors: [{ name: site.name }],
-  creator: site.name,
-  openGraph: {
-    title: site.name,
-    description: site.description,
-    url: site.url,
-    siteName: site.name,
-    locale: "en_US",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: site.name,
-    description: site.description,
-    creator: "@KushagraKanauji",
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
+  metadataBase: new URL("https://kushagrakanaujia.vercel.app"),
+  title,
+  description,
+  authors: [{ name: title }],
+  openGraph: { title, description, type: "website", siteName: title },
+  twitter: { card: "summary_large_image", title, description, creator: "@KushagraKanauji" },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#08090a" },
+    { media: "(prefers-color-scheme: light)", color: "#f5f5f4" },
+  ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={`${sans.variable} ${mono.variable}`} suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
       </head>
-      <body className="dark">
-        <ErrorBoundary>
-          {children}
-        </ErrorBoundary>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
-
