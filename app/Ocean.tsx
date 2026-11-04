@@ -356,11 +356,11 @@ export default function Ocean() {
     const onLeave = () => { mouse.on = false; };
     const onDown = (e: PointerEvent) => {
       const el = e.target as HTMLElement;
-      if (el.closest("a, button, input, textarea, .term, .net, .bubbles")) return; // don't ping when using the UI
+      if (el.closest("a, button, input, textarea, .term, .net, .repo, .card, .log li")) return; // don't ping when using the UI
       rings.push({ x: e.clientX, y: e.clientY, t0: t });
       if (Ds < 0.35) burst(e.clientX, e.clientY, 18);
     };
-    const onBurst = (e: Event) => { const d = (e as CustomEvent<{ x: number; y: number }>).detail; burst(d.x, d.y, 30); };
+    const onBurst = (e: Event) => { const d = (e as CustomEvent<{ x: number; y: number; n?: number }>).detail; burst(d.x, d.y, d.n ?? 30); };
     const onSonar = (e: Event) => { const d = (e as CustomEvent<{ x: number; y: number }>).detail; rings.push({ x: d.x, y: d.y, t0: t }); };
     const onVis = () => { cancelAnimationFrame(raf); if (!document.hidden) { last = performance.now(); raf = requestAnimationFrame(frame); } };
 

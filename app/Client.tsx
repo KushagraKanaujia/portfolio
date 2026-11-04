@@ -87,3 +87,23 @@ export function PingButton({ href }: { href: string }) {
     </a>
   );
 }
+
+/** Anything you click goes jiggly like a bubble, and lets out a few bubbles. */
+export function Jiggle() {
+  useEffect(() => {
+    const SEL = "a, button, .repo, .log li, .card, .net-tip, .dive-st";
+    const onDown = (e: PointerEvent) => {
+      const el = (e.target as HTMLElement).closest<HTMLElement>(SEL);
+      if (!el) return;
+      el.classList.remove("jiggle");
+      void el.offsetWidth; // restart the animation if clicked again
+      el.classList.add("jiggle");
+      const done = () => { el.classList.remove("jiggle"); el.removeEventListener("animationend", done); };
+      el.addEventListener("animationend", done);
+      window.dispatchEvent(new CustomEvent("burst", { detail: { x: e.clientX, y: e.clientY, n: 14 } }));
+    };
+    document.addEventListener("pointerdown", onDown, { passive: true });
+    return () => document.removeEventListener("pointerdown", onDown);
+  }, []);
+  return null;
+}

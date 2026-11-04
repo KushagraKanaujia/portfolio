@@ -436,3 +436,30 @@ footer span:first-child { color: var(--warm); }
 .hero-bubbles { z-index: 1; }
 /* leave open water at the end so the seafloor has the stage to itself */
 footer { padding: 70px 0 42vh; }
+
+/* ---------- v7: everything is a little squishy ---------- */
+.hero-grid, .hero-bubbles { display: none; }
+.hero h1 { font-size: clamp(60px, 12vw, 160px); }
+.jiggle { animation: jiggle .75s cubic-bezier(.2,.8,.3,1) both; }
+@keyframes jiggle {
+  0%   { scale: 1 1; }
+  14%  { scale: 1.1 .9; }
+  28%  { scale: .92 1.08; }
+  42%  { scale: 1.05 .95; }
+  56%  { scale: .97 1.03; }
+  70%  { scale: 1.02 .98; }
+  84%  { scale: .995 1.005; }
+  100% { scale: 1 1; }
+}
+/* a bubble sheen washes over whatever you clicked */
+a.jiggle, button.jiggle, .repo.jiggle, .card.jiggle, .log li.jiggle { position: relative; }
+.jiggle::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 1;
+  background:
+    radial-gradient(circle at 28% 24%, rgba(255,255,255,.45) 0 6%, transparent 22%),
+    conic-gradient(from 200deg, rgba(255,140,200,.0), rgba(255,180,130,.28), rgba(140,230,255,.3), rgba(190,150,255,.25), rgba(255,140,200,0));
+  mix-blend-mode: screen; animation: sheen .75s ease-out both;
+}
+@keyframes sheen { 0% { opacity: 0; } 20% { opacity: 1; } 100% { opacity: 0; } }
+.dive-st.jiggle::before { display: none; }
+@media (prefers-reduced-motion: reduce) { .jiggle, .jiggle::before { animation: none; } }
