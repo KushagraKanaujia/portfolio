@@ -24,6 +24,7 @@ const COMMANDS: [string, string][] = [
   ["ls", "list files"],
   ["cat <file>", "read a file, e.g. cat about.txt"],
   ["projects", "everything I've built, with details"],
+  ["story <name>", "read the full write-up, e.g. story throttle"],
   ["youtube", "my YouTube channel, live stats"],
   ["repos", "my GitHub repos, live"],
   ["experience", "where I've worked"],
@@ -37,7 +38,7 @@ const COMMANDS: [string, string][] = [
   ["clear", "clear the screen"],
 ];
 
-const ALL = ["help", "whoami", "neofetch", "ls", "cat", "repos", "experience", "skills", "socials", "open", "email", "dive", "surface", "whale", "bubbles", "ping", "network", "projects", "spreadreader", "jobpilot", "shorts", "clear", "history", "date", "echo", "sudo", "hire", "github", "linkedin", "x", "youtube", "throttle", "pwd", "cd", "exit", "coffee"];
+const ALL = ["help", "whoami", "neofetch", "ls", "cat", "repos", "experience", "skills", "socials", "open", "email", "dive", "surface", "whale", "bubbles", "ping", "network", "projects", "story", "spreadreader", "jobpilot", "shorts", "clear", "history", "date", "echo", "sudo", "hire", "github", "linkedin", "x", "youtube", "throttle", "pwd", "cd", "exit", "coffee"];
 
 const A = ({ href, children }: { href: string; children: ReactNode }) => (
   <a className="t-link" href={href} target={href.startsWith("mailto") ? undefined : "_blank"} rel="noreferrer">{children}</a>
@@ -89,7 +90,7 @@ export default function Terminal({ repos, channel }: { repos: Repo[]; channel: C
           <div>
             <div><b>Kushagra Kanaujia</b></div>
             <div>Software engineer · UCSB CS &apos;26 · founder of <A href={LINKS.throttle}>Throttle</A></div>
-            <div className="t-dim">I build apps and tools, make YouTube videos about AI and tech ({channel.subscribers} subscribers, {channel.views} views), and contribute to open source.</div>
+            <div className="t-dim">I build apps and tools, make YouTube videos about AI and tech with my own pipeline ({channel.subscribers} subscribers, {channel.views} views), and contribute to open source.</div>
           </div>
         );
         break;
@@ -129,10 +130,10 @@ export default function Terminal({ repos, channel }: { repos: Repo[]; channel: C
             <div><span className="t-warm">Throttle</span> <span className="t-dim">· startup · Python</span><div className="t-dim">Helps companies stop overpaying for AI. <A href={LINKS.throttle}>throttle-pro.com</A> · <A href="https://github.com/KushagraKanaujia/throttle">code</A></div></div>
             <div><span className="t-warm">SpreadReader</span> <span className="t-dim">· iOS · Swift</span><div className="t-dim">Comic and PDF reader for foldable iPhones: page-curl turning, fold-aware two-page spreads, paper sounds, eye-tracked haptics.</div></div>
             <div><span className="t-warm">JobPilot</span> <span className="t-dim">· Python</span><div className="t-dim">Checks AI and startup job boards every day and shows only the brand-new postings, so I see them first.</div></div>
-            <div><span className="t-warm">Shorts autopilot</span> <span className="t-dim">· Python · video</span><div className="t-dim">Turns a trending topic into a finished YouTube Short: script, voice, matched b-roll, vertical render, publish. Powers <A href={LINKS.youtube}>{channel.handle}</A>.</div></div>
+            <div><span className="t-warm">Shorts autopilot</span> <span className="t-dim">· Python · video</span><div className="t-dim">Turns a trending topic into a finished YouTube Short: script, voice, matched b-roll, vertical render, publish. It makes the videos for <A href={LINKS.youtube}>{channel.handle}</A>.</div></div>
             <div><span className="t-warm">claude-cost-proxy</span> <span className="t-dim">· Python</span><div className="t-dim">HTTP proxy for Claude Code with cost tracking, request logs and semantic caching. <A href="https://github.com/KushagraKanaujia/claude-cost-proxy">code</A></div></div>
             <div><span className="t-warm">LiveKit fix</span> <span className="t-dim">· open source · Go</span><div className="t-dim">Tracked down why older ESP32 devices couldn&apos;t connect, across LiveKit, Pion WebRTC and two RFCs. <A href="https://github.com/livekit/livekit/pull/4876">PR #4876</A></div></div>
-            <div className="t-dim">SpreadReader, JobPilot and Shorts autopilot are private for now. type <span className="t-cmd">repos</span> for everything public.</div>
+            <div className="t-dim">SpreadReader, JobPilot and Shorts autopilot are private for now. type <span className="t-cmd">story throttle</span> (or any name) for the full write-up.</div>
           </div>
         );
         break;
@@ -143,7 +144,7 @@ export default function Terminal({ repos, channel }: { repos: Repo[]; channel: C
         print(<span><span className="t-warm">JobPilot</span>: checks AI and startup job boards daily and surfaces only brand-new postings. Python. Private for now.</span>);
         break;
       case "shorts":
-        print(<span><span className="t-warm">Shorts autopilot</span>: trending topic in, finished vertical Short out (script, voice, b-roll, render, publish). It runs <A href={LINKS.youtube}>{channel.handle}</A>.</span>);
+        print(<span><span className="t-warm">Shorts autopilot</span>: trending topic in, finished vertical Short out (script, voice, b-roll, render, publish). It makes the videos for <A href={LINKS.youtube}>{channel.handle}</A>.</span>);
         break;
       case "youtube":
       case "yt":
@@ -154,12 +155,21 @@ export default function Terminal({ repos, channel }: { repos: Repo[]; channel: C
               <div><span className="t-cmd">subscribers</span><span>{channel.subscribers}</span></div>
               <div><span className="t-cmd">total views</span><span>{channel.views}</span></div>
               <div><span className="t-cmd">videos</span><span>{channel.videos}</span></div>
-              <div><span className="t-cmd">about</span><span>Short videos about AI and tech. I write, cut and post them myself.</span></div>
+              <div><span className="t-cmd">about</span><span>Short videos about AI and tech, made with a pipeline I built (Shorts autopilot).</span></div>
             </div>
             <div style={{ marginTop: 4 }}><A href={LINKS.youtube}>watch on YouTube →</A></div>
           </div>
         );
         break;
+      case "story": case "read": {
+        const q = arg.toLowerCase().replace(/[^a-z]/g, "");
+        const map: Record<string, string> = { throttle: "throttle", spreadreader: "spreadreader", spread: "spreadreader", shorts: "shorts-autopilot", shortsautopilot: "shorts-autopilot", youtube: "shorts-autopilot", jobpilot: "jobpilot", livekit: "livekit-fix", livekitfix: "livekit-fix", claudecostproxy: "claude-cost-proxy", proxy: "claude-cost-proxy", codemind: "codemind", minicompanion: "mini-companion", companion: "mini-companion", streamfinder: "streamfinder", visuallayer: "visual-layer", dawdle: "dawdle", smartshore: "smartshore" };
+        const slug = map[q];
+        if (!slug) { print(<span className="t-dim">usage: story throttle · spreadreader · shorts · jobpilot · livekit · proxy · codemind · companion · streamfinder · visuallayer · dawdle · smartshore</span>); break; }
+        print(<span>opening the {slug} story…</span>);
+        setTimeout(() => { window.location.href = `/projects/${slug}`; }, 350);
+        break;
+      }
       case "repos":
         print(
           <div className="t-repos">

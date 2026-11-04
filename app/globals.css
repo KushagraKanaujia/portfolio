@@ -501,3 +501,43 @@ a.jiggle, button.jiggle, .repo.jiggle, .card.jiggle, .log li.jiggle { position: 
 .reef-tags button { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11.5px; color: var(--aqua); cursor: pointer; padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(143,227,255,.28); background: rgba(143,227,255,.07); }
 .reef-tags button:hover { background: rgba(143,227,255,.16); }
 .reef-open { display: inline-flex; margin-top: 14px; padding: 8px 16px; border-radius: 999px; font-size: 13.5px; font-weight: 500; color: #2a1408; background: linear-gradient(135deg, #ffd6a3, var(--warm-2)); }
+
+/* ---------- v9: project story pages ---------- */
+.story { max-width: 860px; padding-top: 110px; padding-bottom: 20vh; }
+.story-back { display: inline-block; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12.5px; color: var(--dim); margin-bottom: 34px; }
+.story-back:hover { color: var(--ink); }
+.story-kind { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; }
+.story h1 { font-size: clamp(48px, 9vw, 104px); margin-top: 12px; background: linear-gradient(100deg, #fff 10%, #d9f3ff 55%, var(--aqua) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.story h1 .dotc { -webkit-text-fill-color: var(--warm); color: var(--warm); }
+.story-one { font-family: var(--serif); font-style: italic; font-size: clamp(24px, 3.4vw, 36px); color: var(--warm); margin-top: 14px; line-height: 1.2; }
+.story-meta { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 30px; }
+@media (max-width: 680px) { .story-meta { grid-template-columns: 1fr; } }
+.story-meta div { padding: 14px 16px; border-radius: 16px; background: var(--glass); border: 1px solid var(--edge); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.story-meta dt { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+.story-meta dd { margin-top: 4px; font-size: 14.5px; color: var(--ink); }
+.story-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+.story-sec { margin-top: 64px; }
+.story-p { font-size: clamp(18px, 2vw, 21px); line-height: 1.6; color: var(--soft); margin-top: 12px; max-width: 760px; }
+.story-steps { list-style: none; margin-top: 16px; display: grid; gap: 12px; }
+.story-steps li { display: grid; grid-template-columns: 54px 1fr; gap: 14px; padding: 20px 22px; border-radius: 20px; background: var(--glass); border: 1px solid var(--edge); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+.story-n { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 22px; color: var(--aqua); text-shadow: 0 0 14px rgba(143,227,255,.5); }
+.story-steps h3 { font-size: 18px; font-weight: 600; letter-spacing: -0.015em; }
+.story-steps p { color: var(--soft); font-size: 15.5px; margin-top: 4px; }
+.story-results { list-style: none; margin-top: 14px; display: grid; gap: 10px; }
+.story-results li { position: relative; padding-left: 26px; font-size: 16.5px; color: var(--ink); line-height: 1.55; }
+.story-results li::before { content: ""; position: absolute; left: 4px; top: .6em; width: 9px; height: 9px; border-radius: 50%; background: var(--warm); box-shadow: 0 0 12px rgba(255,201,143,.7); }
+.story-next { display: flex; flex-direction: column; gap: 6px; margin-top: 80px; padding: 26px 28px; border-radius: 24px; background: var(--glass); border: 1px solid var(--edge); transition: border-color .3s, transform .3s; }
+.story-next:hover { border-color: rgba(255,201,143,.45); transform: translateY(-3px); }
+.story-next-t { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; }
+.story-next-s { color: var(--dim); }
+.reef-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 14px; }
+.reef-actions .reef-open { margin-top: 0; }
+.reef-ext { font-size: 13px; color: var(--aqua); padding: 8px 6px; }
+.log-w a { border-bottom: 1px solid transparent; transition: border-color .25s; }
+.log-w a:hover { border-color: var(--warm); }
+.log-go { font-style: normal; color: var(--warm); font-size: .8em; margin-left: 2px; }
+.hero .cta { margin-top: 30px; }
+.hero .hero-links { margin-top: 14px; }
+.hero .hero-links a { font-size: 13px; padding: 7px 14px; }
+
+.bar { background: rgba(4, 18, 34, 0.82); }

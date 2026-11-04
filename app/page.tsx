@@ -6,6 +6,8 @@ import { LINKS as L } from "./links";
 import { HeroFx, Jiggle, PingButton, Reveal, ScrollWords } from "./Client";
 import { getRepos } from "./github";
 import { getChannel } from "./youtube";
+import Link from "next/link";
+import { bySlug, byRepo } from "./projects/data";
 
 export const revalidate = 3600;
 
@@ -14,12 +16,14 @@ const LANG: Record<string, string> = {
   "C++": "#f06d9a", "C#": "#7fd36b", Swift: "#ff8a5c", Rust: "#dea584", HTML: "#e96b4c", Solidity: "#9aa4ff", Jupyter: "#f3a24a",
 };
 
+const FEATURED = ["throttle", "shorts-autopilot", "spreadreader", "livekit-fix", "claude-cost-proxy", "codemind"];
+
 const LOG = [
-  { d: "2026 —", w: "Throttle", r: "founder", x: "Building my startup. It helps companies stop overpaying for AI.", tags: ["Python", "LLMs", "AWS"] },
-  { d: "2025 — 26", w: "Visual Layer", r: "capstone engineer", x: "Trained ViT and ResNet models on 1.2M+ images to find mislabeled data. Custom C++ pool allocators cut latency 50%.", tags: ["PyTorch", "C++"] },
-  { d: "2025", w: "Dawdle", r: "software engineering intern", x: "Shipped an LLM chatbot to 1,000+ daily users. Traced a 40% latency regression and fixed it; retention rose 18%.", tags: ["React", "Go", "AWS"] },
-  { d: "2024", w: "Smartshore", r: "software engineering intern", x: "Java and Python backend for 100,000+ concurrent users. Found a connection pool leak; responses 22% faster.", tags: ["Java", "Python"] },
-  { d: "2022 — 26", w: "UC Santa Barbara", r: "B.S. Computer Science", x: "Dean's Honors List.", tags: [] },
+  { slug: "throttle", d: "2026 —", w: "Throttle", r: "founder", x: "Building my startup. It helps companies stop overpaying for AI.", tags: ["Python", "LLMs", "AWS"] },
+  { slug: "visual-layer", d: "2025 — 26", w: "Visual Layer", r: "capstone engineer", x: "Trained ViT and ResNet models on 1.2M+ images to find mislabeled data. Custom C++ pool allocators cut latency 50%.", tags: ["PyTorch", "C++"] },
+  { slug: "dawdle", d: "2025", w: "Dawdle", r: "software engineering intern", x: "Shipped an LLM chatbot to 1,000+ daily users. Traced a 40% latency regression and fixed it; retention rose 18%.", tags: ["React", "Go", "AWS"] },
+  { slug: "smartshore", d: "2024", w: "Smartshore", r: "software engineering intern", x: "Java and Python backend for 100,000+ concurrent users. Found a connection pool leak; responses 22% faster.", tags: ["Java", "Python"] },
+  { slug: "", d: "2022 — 26", w: "UC Santa Barbara", r: "B.S. Computer Science", x: "Dean's Honors List.", tags: [] },
 ];
 
 export default async function Page() {
@@ -46,15 +50,19 @@ export default async function Page() {
         <header className="hero">
           <div className="hero-inner wrap">
             <div className="hero-text">
-            <span className="eyebrow rv"><span className="sun-dot" />0 m · surface</span>
+            <span className="eyebrow rv"><span className="sun-dot" />founder · Throttle</span>
             <h1 className="rv">
               <span className="first">Kushagra</span>
               <span className="last">Kanaujia<span className="dotc">.</span></span>
             </h1>
             <p className="intro rv">
-              Hey, I&apos;m Kushagra. Software engineer in San Francisco, CS grad from UCSB. I build software end to
-              end: backends, ML, and apps that feel good to use.
+              Hey, I&apos;m Kushagra. I&apos;m building <b>Throttle</b>, so companies can stop renting their AI.
+              Software engineer in San Francisco, CS grad from UCSB.
             </p>
+            <div className="cta rv">
+              <Link className="btn warm" href="/projects/throttle">Read the Throttle story →</Link>
+              <a className="btn" href={L.email}>Talk to me</a>
+            </div>
             <div className="hero-links rv">
               <a href={L.github} target="_blank" rel="noreferrer">GitHub</a>
               <a href={L.youtube} target="_blank" rel="noreferrer">YouTube</a>
@@ -98,39 +106,31 @@ export default async function Page() {
 
           <section id="made" className="sec">
             <div className="sec-top rv">
-              <span className="kicker">discoveries · live from GitHub</span>
+              <span className="kicker">discoveries · tap one for the full story</span>
               <h2>Things I&apos;ve <em>made.</em></h2>
             </div>
             <div className="repos">
-              {top.map((r, i) => (
-                <a key={r.name} href={r.url} target="_blank" rel="noreferrer" className="repo scan rv" style={{ transitionDelay: `${i * 60}ms` }}>
-                  <div className="repo-top">
-                    <span className="repo-id">#{String(i + 1).padStart(2, "0")}</span>
-                    <span className="repo-go">↗</span>
-                  </div>
-                  <span className="repo-name">{r.name}</span>
-                  <p>{r.description}</p>
-                  <div className="repo-meta">
-                    {r.language && <span><i style={{ background: LANG[r.language] ?? "#9fb6c8" }} />{r.language}</span>}
-                    {r.stars > 0 && <span>★ {r.stars}</span>}
-                    <span>{new Date(r.updated + "T12:00:00Z").toLocaleDateString("en-US", { month: "short", year: "numeric" })}</span>
-                  </div>
-                </a>
-              ))}
-              <a href={L.youtube} target="_blank" rel="noreferrer" className="repo scan yt rv">
-                <div className="repo-top"><span className="repo-id">#{String(top.length + 1).padStart(2, "0")}</span><span className="repo-go">↗</span></div>
-                <span className="repo-name">▶ {channel.handle}</span>
-                <p>My YouTube channel: short videos about AI and tech, made with my own Shorts pipeline.</p>
-                <div className="repo-meta"><span>{channel.subscribers} subscribers</span><span>{channel.views} views</span><span>{channel.videos} videos</span></div>
-              </a>
-              <a href="https://github.com/livekit/livekit/pull/4876" target="_blank" rel="noreferrer" className="repo scan rv">
-                <div className="repo-top"><span className="repo-id">#{String(top.length + 2).padStart(2, "0")}</span><span className="repo-go">↗</span></div>
-                <span className="repo-name">livekit/livekit #4876</span>
-                <p>Open source fix: tracked down why older ESP32 devices couldn&apos;t connect, across LiveKit, Pion WebRTC and two RFCs.</p>
-                <div className="repo-meta"><span><i style={{ background: LANG.Go }} />Go</span><span>pull request</span></div>
-              </a>
+              {FEATURED.map((slug, i) => {
+                const st = bySlug(slug)!;
+                const r = repos.find((x) => x.name === st.repo);
+                return (
+                  <Link key={slug} href={`/projects/${slug}`} className={`repo scan rv${slug === "shorts-autopilot" ? " yt" : ""}`} style={{ transitionDelay: `${i * 60}ms` }}>
+                    <div className="repo-top">
+                      <span className="repo-id">#{String(i + 1).padStart(2, "0")} · {st.kind}</span>
+                      <span className="repo-go">read →</span>
+                    </div>
+                    <span className="repo-name">{st.title}</span>
+                    <p>{st.oneLiner} {st.summary.split(". ")[0]}.</p>
+                    <div className="repo-meta">
+                      {st.stack.slice(0, 3).map((t) => <span key={t}>{t}</span>)}
+                      {r && r.stars > 0 && <span>★ {r.stars}</span>}
+                      {slug === "shorts-autopilot" && <span>{channel.subscribers} subs · {channel.views} views</span>}
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
-            <a className="link rv" href={L.github} target="_blank" rel="noreferrer">all {repos.length} public repos on GitHub →</a>
+            <a className="link rv" href={L.github} target="_blank" rel="noreferrer">{repos.length} original repos on GitHub →</a>
           </section>
 
           <section id="log" className="sec">
@@ -144,7 +144,7 @@ export default async function Page() {
                   <span className="log-dot" />
                   <span className="log-d">{e.d}</span>
                   <div className="log-body">
-                    <div className="log-w">{e.w} <span>· {e.r}</span></div>
+                    <div className="log-w">{e.slug ? <Link href={`/projects/${e.slug}`}>{e.w} <i className="log-go">→</i></Link> : e.w} <span>· {e.r}</span></div>
                     <p>{e.x}</p>
                     {e.tags.length > 0 && <div className="log-tags">{e.tags.map((t) => <span key={t}>{t}</span>)}</div>}
                   </div>

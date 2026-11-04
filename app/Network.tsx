@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 
 /** "Connecting the dots", drawn as a bioluminescent reef.
  *  Orbs are what I've built (warm), where I've worked (coral) and skills (cyan), all tied back to me.
@@ -16,7 +17,7 @@ const ITEMS: Item[] = [
   { id: "throttle", label: "Throttle", kind: "project", desc: "My startup. It helps companies stop overpaying for AI.", href: "https://throttle-pro.com", links: ["Python", "LLMs", "AWS"] },
   { id: "spread", label: "SpreadReader", kind: "project", desc: "Comic and PDF reader for foldable iPhones: page-curl turning, fold-aware two-page spreads, paper sounds and eye-tracked haptics. Private for now.", links: ["Swift"] },
   { id: "jobpilot", label: "JobPilot", kind: "project", desc: "Checks AI and startup job boards every day and surfaces only brand-new postings. Private for now.", links: ["Python", "LLMs"] },
-  { id: "shorts", label: "Shorts autopilot", kind: "project", desc: "Trending topic in, finished YouTube Short out: script, voice, b-roll, render, publish. It runs @ai_reveal_tech.", href: "https://www.youtube.com/@ai_reveal_tech", links: ["Python", "Video", "LLMs"] },
+  { id: "shorts", label: "Shorts autopilot", kind: "project", desc: "Trending topic in, finished YouTube Short out: script, voice, b-roll, render, publish. It makes the videos for @ai_reveal_tech.", href: "https://www.youtube.com/@ai_reveal_tech", links: ["Python", "Video", "LLMs"] },
   { id: "proxy", label: "claude-cost-proxy", kind: "project", desc: "HTTP proxy for Claude Code with cost tracking, request logs and semantic caching.", href: "https://github.com/KushagraKanaujia/claude-cost-proxy", links: ["Python", "LLMs"] },
   { id: "codemind", label: "codemind", kind: "project", desc: "Semantic code search powered by Claude. Finds, explains and ranks implementations.", href: "https://github.com/KushagraKanaujia/codemind", links: ["Python", "LLMs"] },
   { id: "livekit", label: "LiveKit fix", kind: "project", desc: "Open source: tracked down why older ESP32 devices couldn't connect, across LiveKit, Pion WebRTC and two RFCs. PR #4876.", href: "https://github.com/livekit/livekit/pull/4876", links: ["Go", "WebRTC"] },
@@ -35,6 +36,8 @@ const FILTERS: { k: string; label: string; match: (n: N) => boolean }[] = [
   { k: "systems", label: "systems", match: (n) => ["Go", "C++", "Java", "WebRTC", "AWS"].includes(n.id) || n.links.some((l) => ["Go", "C++", "Java", "WebRTC", "AWS"].includes(l)) },
   { k: "work", label: "work", match: (n) => n.kind === "work" },
 ];
+
+const STORY: Record<string, string> = { throttle: "throttle", spread: "spreadreader", jobpilot: "jobpilot", shorts: "shorts-autopilot", proxy: "claude-cost-proxy", codemind: "codemind", livekit: "livekit-fix", companion: "mini-companion", vl: "visual-layer", dawdle: "dawdle", smartshore: "smartshore" };
 
 const COLORS: Record<Kind, [number, number, number]> = {
   me: [240, 250, 255], project: [255, 201, 143], work: [255, 150, 125], skill: [120, 225, 255],
@@ -306,7 +309,10 @@ export default function Network() {
                 <div className="reef-tags">{card.links.map((l) => <button key={l} onClick={() => api.current?.select(l)}>{l}</button>)}</div>
               </>
             ) : null}
-            {card.href && <a className="reef-open" href={card.href} target="_blank" rel="noreferrer">open ↗</a>}
+            <div className="reef-actions">
+              {STORY[card.id] && <Link className="reef-open" href={`/projects/${STORY[card.id]}`}>read the story →</Link>}
+              {card.href && <a className="reef-ext" href={card.href} target="_blank" rel="noreferrer">open ↗</a>}
+            </div>
           </div>
         )}
       </div>
