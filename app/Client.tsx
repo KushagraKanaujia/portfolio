@@ -69,3 +69,21 @@ export function HeroFx() {
   }, []);
   return null;
 }
+
+/** Email button that sends a sonar ping from itself before opening your mail app. */
+export function PingButton({ href }: { href: string }) {
+  return (
+    <a
+      className="btn warm"
+      href={href}
+      onClick={(e) => {
+        const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
+        window.dispatchEvent(new CustomEvent("sonar", { detail: { x: r.left + r.width / 2, y: r.top + r.height / 2 } }));
+        e.preventDefault();
+        setTimeout(() => { window.location.href = href; }, 650);
+      }}
+    >
+      ping me · email
+    </a>
+  );
+}

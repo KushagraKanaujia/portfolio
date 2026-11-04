@@ -18,7 +18,7 @@ type Line = { kind: "in" | "out"; node: ReactNode };
 const FILES: Record<string, string> = {
   "about.txt": "Kushagra Kanaujia, Kush for short.\nSoftware engineer. UCSB computer science, class of 2026.\nI live a few steps from the Pacific.\nI like making things that feel good to use.",
   "throttle.txt": "Throttle is my startup.\nIt helps companies stop overpaying for AI.\nIt's just me for now.  →  throttle-pro.com",
-  "likes.txt": "- sunsets on the IV bluffs\n- making little iOS apps\n- making short videos about AI and tech\n- hard bugs in huge codebases\n- good design and smooth animations\n- startups",
+  "likes.txt": "- making little iOS apps\n- making short videos about AI and tech\n- hard bugs in huge codebases\n- good design and smooth animations\n- startups",
   "contact.txt": "email     kushagrakanaujia@ucsb.edu\nlinkedin  linkedin.com/in/kushagra-kanaujia\ngithub    github.com/KushagraKanaujia\nx         @kush_1309\nyoutube   @ai_reveal_tech",
   "projects.txt": "Throttle          my startup. helps companies stop overpaying for AI\nSpreadReader      comic + PDF reader for foldable iPhones (iOS)\nJobPilot          daily tracker for new AI and startup job postings\nShorts autopilot  topic in, finished YouTube Short out\nclaude-cost-proxy see what every Claude Code request costs\nLiveKit fix       open source: ESP32 devices that couldn't connect\n\nmore: type projects, or repos for everything on GitHub",
   "secret.txt": "you found it. there's a whale in here somewhere.\ntry: whale",
@@ -38,17 +38,17 @@ const COMMANDS: [string, string][] = [
   ["open <name>", "github · linkedin · x · youtube · throttle"],
   ["email", "write me an email"],
   ["dive / surface", "jump to the bottom or top"],
-  ["whale · jelly · deep · bubbles · glow", "go see the ocean"],
+  ["ping", "send a sonar ping"],
+  ["network", "jump to the network of everything I've built"],
   ["clear", "clear the screen"],
 ];
 
-const ALL = ["help", "whoami", "neofetch", "ls", "cat", "repos", "experience", "skills", "socials", "open", "email", "dive", "surface", "whale", "bubbles", "glow", "jelly", "deep", "projects", "spreadreader", "jobpilot", "shorts", "clear", "history", "date", "echo", "sudo", "hire", "github", "linkedin", "x", "youtube", "throttle", "pwd", "cd", "exit", "coffee"];
+const ALL = ["help", "whoami", "neofetch", "ls", "cat", "repos", "experience", "skills", "socials", "open", "email", "dive", "surface", "whale", "bubbles", "ping", "network", "projects", "spreadreader", "jobpilot", "shorts", "clear", "history", "date", "echo", "sudo", "hire", "github", "linkedin", "x", "youtube", "throttle", "pwd", "cd", "exit", "coffee"];
 
 const A = ({ href, children }: { href: string; children: ReactNode }) => (
   <a className="t-link" href={href} target={href.startsWith("mailto") ? undefined : "_blank"} rel="noreferrer">{children}</a>
 );
 
-const ocean = (k: string) => window.dispatchEvent(new CustomEvent("ocean", { detail: k }));
 
 const WAVE = String.raw`
       .-~~~-.
@@ -235,11 +235,19 @@ export default function Terminal({ repos, channel }: { repos: Repo[]; channel: C
         print(<span>heading up. sunlight ahead.</span>);
         window.scrollTo({ top: 0, behavior: "smooth" });
         break;
-      case "whale": print(<span>🐋 taking you to the humpback…</span>); ocean("whale"); break;
-      case "deep": print(<span>🪼 heading to the abyss. it glows down there.</span>); ocean("deep"); break;
-      case "bubbles": print(<span>🫧 blub blub.</span>); ocean("bubbles"); break;
-      case "glow": print(<span>✨ waking up the plankton.</span>); ocean("glow"); break;
-      case "jelly": print(<span>🪼 to the jellyfish…</span>); ocean("jelly"); break;
+      case "ping": {
+        print(<span>📡 ping sent. watch the water.</span>);
+        const b = boxRef.current?.getBoundingClientRect();
+        window.dispatchEvent(new CustomEvent("sonar", { detail: { x: b ? b.left + b.width / 2 : innerWidth / 2, y: b ? b.top - 40 : innerHeight / 2 } }));
+        break;
+      }
+      case "network":
+        print(<span>connecting the dots…</span>);
+        document.getElementById("network")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        break;
+      case "whale": case "jelly": case "squid":
+        print(<span className="t-dim">they swam off. try <span className="t-cmd">ping</span> instead.</span>);
+        break;
       case "clear": setLines([]); break;
       case "history": print(<pre className="t-pre">{hist.map((h, i) => `${String(i + 1).padStart(3)}  ${h}`).join("\n") || "nothing yet"}</pre>); break;
       case "date": print(<span>{new Date().toString()}</span>); break;
@@ -312,7 +320,7 @@ export default function Terminal({ repos, channel }: { repos: Repo[]; channel: C
     } else if (e.key === "l" && e.ctrlKey) { e.preventDefault(); setLines([]); }
   }
 
-  const chips = ["help", "whoami", "projects", "youtube", "repos", "socials", "whale"];
+  const chips = ["help", "whoami", "projects", "youtube", "repos", "socials", "ping"];
 
   return (
     <div className="term" ref={boxRef} onClick={() => inputRef.current?.focus({ preventScroll: true })}>

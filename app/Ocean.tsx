@@ -4,37 +4,25 @@ import { useEffect, useRef } from "react";
 import { createWater, type Water } from "./water";
 
 /*
-  The page is a dive. Scroll position = depth.
-  - Surface: a WebGL water shader (sun, god rays, caustics, the surface from below).
-  - Below that: real underwater footage that plays on its own and crossfades by depth:
-    a humpback whale, then moon jellyfish, then crystal jellyfish glowing in the dark.
-  - On top: drifting marine snow and, in the deep, softly twinkling plankton.
+  Background: the page is a dive (scroll = depth).
+  - WebGL water: sun, god rays, caustics near the surface, then darkness.
+  - Particles: marine snow everywhere, bioluminescent plankton deeper down.
+  - Interactive: your cursor is a soft light in the dark; click / tap anywhere to send a sonar ping
+    that ripples out and lights up every particle it passes.
 */
-
-const MAX_DEPTH = 4000;
-const ZONES: [number, string][] = [
-  [0, "Sunlight zone"], [0.25, "Twilight zone"], [0.62, "Midnight zone"], [0.88, "The abyss"],
-];
 
 type RGB = [number, number, number];
 const BG: [number, RGB, RGB][] = [
   [0.0, [38, 132, 172], [8, 62, 100]],
-  [0.25, [10, 64, 104], [4, 34, 64]],
-  [0.55, [4, 28, 54], [2, 15, 33]],
-  [0.8, [2, 13, 29], [1, 7, 18]],
+  [0.22, [10, 64, 104], [4, 34, 64]],
+  [0.5, [4, 28, 54], [2, 15, 33]],
+  [0.78, [2, 13, 29], [1, 7, 18]],
   [1.0, [1, 6, 14], [0, 3, 8]],
 ];
-
-export const CLIPS = [
-  { id: "whale", src: "/ocean/whale.mp4", poster: "/ocean/whale.jpg" },
-  { id: "moon", src: "/ocean/moon-jellies.mp4", poster: "/ocean/moon-jellies.jpg" },
-  { id: "crystal", src: "/ocean/crystal-jellies.mp4", poster: "/ocean/crystal-jellies.jpg" },
-] as const;
 
 const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 const smooth = (e0: number, e1: number, x: number) => { const t = clamp((x - e0) / (e1 - e0)); return t * t * (3 - 2 * t); };
-const band = (x: number, a: number, b: number, c: number, d: number) => smooth(a, b, x) * (1 - smooth(c, d, x));
 
 function bgAt(D: number): [RGB, RGB] {
   for (let i = 0; i < BG.length - 1; i++) {
@@ -47,13 +35,13 @@ function bgAt(D: number): [RGB, RGB] {
   return [BG[BG.length - 1][1], BG[BG.length - 1][2]];
 }
 
+export function ping(x: number, y: number) {
+  window.dispatchEvent(new CustomEvent("sonar", { detail: { x, y } }));
+}
+
 export default function Ocean() {
   const waterRef = useRef<HTMLCanvasElement>(null);
   const lifeRef = useRef<HTMLCanvasElement>(null);
-  const vids = useRef<(HTMLVideoElement | null)[]>([]);
-  const depthRef = useRef<HTMLSpanElement>(null);
-  const zoneRef = useRef<HTMLSpanElement>(null);
-  const markRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const wcan = waterRef.current!, canvas = lifeRef.current!;
@@ -64,33 +52,20 @@ export default function Ocean() {
     let W = 0, H = 0, small = false;
     let raf = 0, t = 0, last = performance.now();
     let D = 0, Ds = 0;
-    let glowFlash = 0;
+    const mouse = { x: -9999, y: -9999, on: false };
     const R = Math.random;
 
-    type Snow = { x: number; y: number; z: number; s: number };
-    type Bubble = { x: number; y: number; r: number; v: number; ph: number; life: number };
-    let snow: Snow[] = [], bokeh: Snow[] = [], bubbles: Bubble[] = [], plank: Snow[] = [];
-
-    // where each clip lives, tied to the page's sections
-    let whaleEnd = 0.6, moonEnd = 0.8;
-    function anchor() {
-      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-      const at = (id: string, fb: number) => {
-        const el = document.getElementById(id);
-        if (!el) return fb;
-        const r = el.getBoundingClientRect();
-        return clamp((r.top + window.scrollY + r.height / 2 - window.innerHeight / 2) / max);
-      };
-      whaleEnd = at("whale-spot", whaleEnd) + 0.05;
-      moonEnd = at("made", moonEnd) + 0.06;
-    }
+    type Dot = { x: number; y: number; z: number; s: number; glow: number };
+    type Bubble = { x: number; y: number; r: number; v: number; ph: number };
+    type Ring = { x: number; y: number; t0: number };
+    let snow: Dot[] = [], plank: Dot[] = [], bubbles: Bubble[] = [];
+    const rings: Ring[] = [];
 
     function populate() {
       const k = small ? 0.5 : 1;
-      snow = Array.from({ length: Math.round(170 * k) }, () => ({ x: R() * W, y: R() * H, z: 0.3 + R() * 0.9, s: R() }));
-      bokeh = Array.from({ length: Math.round(10 * k) }, () => ({ x: R() * W, y: R() * H, z: 1 + R() * 1.5, s: R() }));
-      bubbles = Array.from({ length: Math.round(26 * k) }, () => ({ x: R() * W, y: R() * H, r: 1.5 + R() * 4.5, v: 22 + R() * 40, ph: R() * 6, life: -1 }));
-      plank = Array.from({ length: Math.round(160 * k) }, () => ({ x: R() * W, y: R() * H, z: 0.4 + R() * 0.8, s: R() * 6 }));
+      snow = Array.from({ length: Math.round(150 * k) }, () => ({ x: R() * W, y: R() * H, z: 0.3 + R() * 0.9, s: R(), glow: 0 }));
+      plank = Array.from({ length: Math.round(240 * k) }, () => ({ x: R() * W, y: R() * H, z: 0.4 + R() * 0.8, s: R() * 6, glow: 0 }));
+      bubbles = Array.from({ length: Math.round(22 * k) }, () => ({ x: R() * W, y: R() * H, r: 1.5 + R() * 4, v: 22 + R() * 40, ph: R() * 6 }));
     }
 
     function resize() {
@@ -101,7 +76,6 @@ export default function Ocean() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       water?.resize(Math.round(W * (small ? 0.5 : 0.6)), Math.round(H * (small ? 0.5 : 0.6)));
       populate();
-      anchor();
     }
 
     function flatWater() {
@@ -111,97 +85,88 @@ export default function Ocean() {
       ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
     }
 
-    // particles drift on their own; they do not react to scrolling or the mouse
-    function marineSnow(dt: number) {
-      const a = 0.18 + 0.4 * smooth(0.1, 0.6, Ds);
-      ctx.fillStyle = `rgba(215,232,245,${a})`;
+    // how strongly a sonar ring is passing over a point right now
+    function sonarAt(x: number, y: number) {
+      let v = 0;
+      for (const r of rings) {
+        const age = t - r.t0, rad = age * 520, d = Math.hypot(x - r.x, y - r.y);
+        const band = Math.exp(-Math.pow((d - rad) / 40, 2)) * Math.max(0, 1 - age / 2.2);
+        v = Math.max(v, band);
+      }
+      return v;
+    }
+
+    function cursorAt(x: number, y: number) {
+      if (!mouse.on) return 0;
+      const d = Math.hypot(x - mouse.x, y - mouse.y);
+      return d < 170 ? 1 - d / 170 : 0;
+    }
+
+    function drawRings() {
+      for (let i = rings.length - 1; i >= 0; i--) {
+        const r = rings[i], age = t - r.t0;
+        if (age > 2.2) { rings.splice(i, 1); continue; }
+        const rad = age * 520, a = Math.max(0, 1 - age / 2.2);
+        for (let k = 0; k < 3; k++) {
+          const rr = rad - k * 26;
+          if (rr <= 0) continue;
+          ctx.strokeStyle = `rgba(143,227,255,${(0.42 - k * 0.12) * a})`;
+          ctx.lineWidth = 1.4 - k * 0.3;
+          ctx.beginPath(); ctx.arc(r.x, r.y, rr, 0, Math.PI * 2); ctx.stroke();
+        }
+        ctx.fillStyle = `rgba(255,201,143,${0.9 * a})`;
+        ctx.beginPath(); ctx.arc(r.x, r.y, 3 + (1 - a) * 3, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+
+    function particles(dt: number) {
+      // marine snow
+      const sa = 0.2 + 0.35 * smooth(0.1, 0.6, Ds);
       for (const p of snow) {
         p.y += (5 + p.z * 8) * dt;
         p.x += Math.sin(t * 0.3 + p.s * 10) * 0.12;
         if (p.y > H + 5) { p.y = -5; p.x = R() * W; }
-        ctx.globalAlpha = 0.3 + p.s * 0.5;
-        ctx.beginPath(); ctx.arc(p.x, p.y, p.z * 0.9, 0, Math.PI * 2); ctx.fill();
+        const lit = Math.max(sonarAt(p.x, p.y), cursorAt(p.x, p.y) * 0.6);
+        p.glow = lit > p.glow ? lit : lerp(p.glow, lit, clamp(dt * 1.5));
+        ctx.fillStyle = p.glow > 0.05 ? `rgba(255,${lerp(232, 206, p.glow)},${lerp(245, 150, p.glow)},${Math.min(1, sa + p.glow)})` : `rgba(215,232,245,${sa * (0.4 + p.s * 0.6)})`;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.z * (0.9 + p.glow * 1.6), 0, Math.PI * 2); ctx.fill();
       }
-      ctx.globalAlpha = 1;
-      for (const b of bokeh) {
-        b.y += 4 * dt;
-        b.x += Math.sin(t * 0.2 + b.s * 8) * 0.2;
-        if (b.y > H + 40) { b.y = -40; b.x = R() * W; }
-        const r = 8 + b.z * 10;
-        const g = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, r);
-        g.addColorStop(0, `rgba(220,240,255,${0.08 * a})`); g.addColorStop(1, "rgba(220,240,255,0)");
-        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(b.x, b.y, r, 0, Math.PI * 2); ctx.fill();
-      }
-    }
-
-    function bubbleLayer(dt: number) {
-      const a = 1 - smooth(0.15, 0.35, Ds);
-      for (let i = bubbles.length - 1; i >= 0; i--) {
-        const b = bubbles[i];
+      // bubbles near the surface
+      const ba = 1 - smooth(0.12, 0.3, Ds);
+      if (ba > 0.01) for (const b of bubbles) {
         b.y -= b.v * dt; b.ph += dt * 2.2;
-        if (b.life >= 0) { b.life -= dt; if (b.life <= 0 || b.y < -20) { bubbles.splice(i, 1); continue; } }
-        else if (b.y < -10) { b.y = H + 10; b.x = R() * W; }
-        const alpha = b.life >= 0 ? 0.9 : a;
-        if (alpha <= 0.01) continue;
+        if (b.y < -10) { b.y = H + 10; b.x = R() * W; }
         const x = b.x + Math.sin(b.ph) * (2 + b.r);
-        const g = ctx.createRadialGradient(x, b.y, b.r * 0.2, x, b.y, b.r);
-        g.addColorStop(0, `rgba(200,235,255,${0.04 * alpha})`);
-        g.addColorStop(0.8, `rgba(200,235,255,${0.12 * alpha})`);
-        g.addColorStop(1, `rgba(235,250,255,${0.5 * alpha})`);
-        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, b.y, b.r, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = `rgba(255,255,255,${0.7 * alpha})`;
-        ctx.beginPath(); ctx.ellipse(x - b.r * 0.38, b.y - b.r * 0.4, b.r * 0.28, b.r * 0.18, -0.6, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = `rgba(225,245,255,${0.45 * ba})`; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(x, b.y, b.r, 0, Math.PI * 2); ctx.stroke();
+        ctx.fillStyle = `rgba(255,255,255,${0.6 * ba})`;
+        ctx.beginPath(); ctx.arc(x - b.r * 0.35, b.y - b.r * 0.35, b.r * 0.25, 0, Math.PI * 2); ctx.fill();
       }
-    }
-
-    function plankton(dt: number) {
-      glowFlash = Math.max(0, glowFlash - dt * 0.3);
-      const a = Math.max(smooth(0.82, 0.92, Ds) * 0.7, glowFlash);
-      if (a <= 0.01) return;
-      ctx.save();
-      ctx.globalCompositeOperation = "lighter";
-      for (const p of plank) {
-        p.y -= 3 * p.z * dt;
-        p.x += Math.sin(t * 0.4 + p.s) * 0.15;
-        if (p.y < -10) { p.y = H + 10; p.x = R() * W; }
-        const tw = Math.pow(0.5 + 0.5 * Math.sin(t * (0.6 + p.z) + p.s * 4), 3);
-        const g = glowFlash;
-        const rC = lerp(90, 255, g), gC = lerp(205, 196, g), bC = lerp(255, 120, g);
-        const rad = p.z * (1 + tw * 1.4 + g * 2.5);
-        const grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, rad * 5);
-        grd.addColorStop(0, `rgba(${rC},${gC},${bC},${0.3 * a * (tw + g)})`); grd.addColorStop(1, "rgba(0,0,0,0)");
-        ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(p.x, p.y, rad * 5, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = `rgba(${rC},${gC},${bC},${Math.min(1, a * (0.25 + tw))})`;
-        ctx.beginPath(); ctx.arc(p.x, p.y, rad * 0.7, 0, Math.PI * 2); ctx.fill();
+      // bioluminescent plankton in the deep
+      const pa = smooth(0.4, 0.7, Ds);
+      if (pa > 0.01) {
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        for (const p of plank) {
+          p.y -= 3 * p.z * dt;
+          p.x += Math.sin(t * 0.4 + p.s) * 0.15;
+          if (p.y < -10) { p.y = H + 10; p.x = R() * W; }
+          const lit = Math.max(sonarAt(p.x, p.y), cursorAt(p.x, p.y));
+          p.glow = lit > p.glow ? lerp(p.glow, lit, clamp(dt * 12)) : lerp(p.glow, lit, clamp(dt * 0.8));
+          const tw = Math.pow(0.5 + 0.5 * Math.sin(t * (0.6 + p.z) + p.s * 4), 3);
+          const g = p.glow;
+          const rC = lerp(90, 255, g), gC = lerp(205, 200, g), bC = lerp(255, 130, g);
+          const rad = p.z * (1 + tw * 1.2 + g * 3);
+          if (tw + g > 0.15) {
+            const grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, rad * 5);
+            grd.addColorStop(0, `rgba(${rC},${gC},${bC},${0.3 * pa * (tw * 0.6 + g)})`); grd.addColorStop(1, "rgba(0,0,0,0)");
+            ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(p.x, p.y, rad * 5, 0, Math.PI * 2); ctx.fill();
+          }
+          ctx.fillStyle = `rgba(${rC},${gC},${bC},${Math.min(1, pa * (0.2 + tw * 0.6 + g))})`;
+          ctx.beginPath(); ctx.arc(p.x, p.y, rad * 0.7, 0, Math.PI * 2); ctx.fill();
+        }
+        ctx.restore();
       }
-      ctx.restore();
-    }
-
-    function footage() {
-      const ops = [
-        band(Ds, 0.12, 0.22, whaleEnd - 0.03, whaleEnd + 0.04),
-        band(Ds, whaleEnd - 0.03, whaleEnd + 0.04, moonEnd - 0.03, moonEnd + 0.04),
-        smooth(moonEnd - 0.03, moonEnd + 0.04, Ds),
-      ];
-      vids.current.forEach((v, i) => {
-        if (!v) return;
-        const o = ops[i];
-        v.style.opacity = o.toFixed(3);
-        // a gentle push-in as you pass, like a slow camera move
-        v.style.transform = `scale(${(1.04 + o * 0.03).toFixed(4)})`;
-        if (o > 0.01 && v.paused && !reduce) v.play().catch(() => {});
-        if (o <= 0.01 && !v.paused) v.pause();
-        if (o > 0 && v.preload !== "auto") v.preload = "auto";
-      });
-    }
-
-    function hud() {
-      const m = Math.round(Ds * MAX_DEPTH);
-      if (depthRef.current) depthRef.current.textContent = m.toLocaleString("en-US");
-      let z = ZONES[0][1];
-      for (const [d, n] of ZONES) if (Ds >= d) z = n;
-      if (zoneRef.current && zoneRef.current.textContent !== z) zoneRef.current.textContent = z;
-      if (markRef.current) markRef.current.style.top = `${Ds * 100}%`;
     }
 
     function frame(now: number) {
@@ -212,45 +177,41 @@ export default function Ocean() {
       D = clamp(window.scrollY / max);
       Ds = lerp(Ds, D, reduce ? 1 : clamp(dt * 6));
       const [top, bot] = bgAt(Ds);
-      if (water) water.render({ time: t, depth: Ds, top, bot, mouse: [-1, -1] });
+      if (water) water.render({ time: t, depth: Ds, top, bot, mouse: mouse.on ? [mouse.x / W, mouse.y / H] : [-1, -1] });
       ctx.clearRect(0, 0, W, H);
       if (!water) flatWater();
-      footage();
-      marineSnow(dt);
-      bubbleLayer(dt);
-      plankton(dt);
-      hud();
+      particles(dt);
+      drawRings();
       raf = requestAnimationFrame(frame);
     }
 
-    const onVis = () => {
-      cancelAnimationFrame(raf);
-      if (document.hidden) vids.current.forEach((v) => v?.pause());
-      else { last = performance.now(); raf = requestAnimationFrame(frame); }
+    const onMove = (e: PointerEvent) => { mouse.x = e.clientX; mouse.y = e.clientY; mouse.on = e.pointerType === "mouse"; };
+    const onLeave = () => { mouse.on = false; };
+    const onDown = (e: PointerEvent) => {
+      const el = e.target as HTMLElement;
+      if (el.closest("a, button, input, textarea, .term, .net")) return; // don't ping when using the UI
+      rings.push({ x: e.clientX, y: e.clientY, t0: t });
     };
-    const scrollToSection = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "center" });
-    const onOcean = (e: Event) => {
-      const k = (e as CustomEvent<string>).detail;
-      if (k === "bubbles") for (let i = 0; i < 70; i++) bubbles.push({ x: W * 0.5 + (R() - 0.5) * 160, y: H * 0.75 + R() * 120, r: 1.5 + R() * 7, v: 60 + R() * 140, ph: R() * 6, life: 6 });
-      if (k === "glow") glowFlash = 1;
-      if (k === "whale") scrollToSection("whale-spot");
-      if (k === "jelly") scrollToSection("made");
-      if (k === "deep") window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
-    };
+    const onSonar = (e: Event) => { const d = (e as CustomEvent<{ x: number; y: number }>).detail; rings.push({ x: d.x, y: d.y, t0: t }); };
+    const onVis = () => { cancelAnimationFrame(raf); if (!document.hidden) { last = performance.now(); raf = requestAnimationFrame(frame); } };
 
     resize();
     Ds = D = clamp(window.scrollY / Math.max(1, document.documentElement.scrollHeight - window.innerHeight));
-    const anchorTimer = setInterval(anchor, 1500);
     window.addEventListener("resize", resize);
-    window.addEventListener("ocean", onOcean);
+    window.addEventListener("pointermove", onMove, { passive: true });
+    window.addEventListener("pointerdown", onDown, { passive: true });
+    window.addEventListener("sonar", onSonar);
+    document.addEventListener("pointerleave", onLeave);
     document.addEventListener("visibilitychange", onVis);
     raf = requestAnimationFrame(frame);
     return () => {
       cancelAnimationFrame(raf);
-      clearInterval(anchorTimer);
       water?.destroy();
       window.removeEventListener("resize", resize);
-      window.removeEventListener("ocean", onOcean);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("sonar", onSonar);
+      document.removeEventListener("pointerleave", onLeave);
       document.removeEventListener("visibilitychange", onVis);
     };
   }, []);
@@ -258,30 +219,7 @@ export default function Ocean() {
   return (
     <>
       <canvas ref={waterRef} className="ocean water" aria-hidden />
-      {CLIPS.map((c, i) => (
-        <video
-          key={c.id}
-          ref={(el) => { vids.current[i] = el; }}
-          className={`footage f-${c.id}`}
-          src={c.src}
-          poster={c.poster}
-          muted
-          loop
-          playsInline
-          preload={i === 0 ? "auto" : "metadata"}
-          aria-hidden
-          tabIndex={-1}
-        />
-      ))}
-      <div className="footage-grade" aria-hidden />
       <canvas ref={lifeRef} className="ocean life" aria-hidden />
-      <div className="gauge" aria-hidden>
-        <div className="gauge-track"><span ref={markRef} className="gauge-mark" /></div>
-        <div className="gauge-read">
-          <span className="gauge-num"><span ref={depthRef}>0</span> m</span>
-          <span ref={zoneRef} className="gauge-zone">Sunlight zone</span>
-        </div>
-      </div>
     </>
   );
 }
