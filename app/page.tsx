@@ -1,7 +1,9 @@
 import Ocean from "./Ocean";
 import DiveLine from "./DiveLine";
 import Network from "./Network";
-import Terminal, { LINKS as L } from "./Terminal";
+import Bubbles from "./Bubbles";
+import Terminal from "./Terminal";
+import { LINKS as L } from "./links";
 import { HeroFx, PingButton, Reveal, ScrollWords } from "./Client";
 import { getRepos } from "./github";
 import { getChannel } from "./youtube";
@@ -42,7 +44,8 @@ export default async function Page() {
 
       <main id="top">
         <header className="hero">
-          <div className="hero-inner wrap">
+          <div className="hero-inner wrap hero-grid">
+            <div className="hero-text">
             <span className="eyebrow rv"><span className="sun-dot" />0 m · surface</span>
             <h1 className="rv">
               <span className="first">Kushagra</span>
@@ -52,13 +55,22 @@ export default async function Page() {
               Hey, I&apos;m Kush. Computer science grad from UCSB. I build software end to end: backends, ML,
               and apps that feel good to use.
             </p>
-            <div className="hero-links rv">
-              <a href={L.github} target="_blank" rel="noreferrer">GitHub</a>
-              <a href={L.youtube} target="_blank" rel="noreferrer">YouTube</a>
-              <a href={L.x} target="_blank" rel="noreferrer">X</a>
-              <a href={L.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
+            <p className="hint rv">tip: pop a bubble, or click the water to send a sonar ping</p>
             </div>
-            <p className="hint rv">tip: click anywhere to send a sonar ping</p>
+            <div className="hero-bubbles rv">
+              <Bubbles
+                items={[
+                  { label: "GitHub", sub: "code", href: L.github, size: 1.15 },
+                  { label: "YouTube", sub: "videos", href: L.youtube, size: 1.05 },
+                  { label: "terminal", sub: "ask me", href: "#terminal", size: 0.95 },
+                  { label: "X", sub: "@kush_1309", href: L.x, size: 0.85 },
+                  { label: "projects", sub: "made", href: "#made", size: 1.1 },
+                  { label: "LinkedIn", sub: "work", href: L.linkedin, size: 0.95 },
+                  { label: "network", sub: "the dots", href: "#network", size: 0.9 },
+                  { label: "email", sub: "say hi", href: L.email, size: 1 },
+                ]}
+              />
+            </div>
           </div>
           <a href="#dive" className="dive-hint"><span>scroll to dive</span><i /></a>
         </header>
