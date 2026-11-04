@@ -2,6 +2,7 @@ import Ocean from "./Ocean";
 import Terminal, { LINKS as L } from "./Terminal";
 import { HeroFx, Reveal, ScrollWords } from "./Client";
 import { getRepos } from "./github";
+import { getChannel } from "./youtube";
 
 export const revalidate = 3600;
 
@@ -34,7 +35,7 @@ const SOCIALS = [
 ];
 
 export default async function Page() {
-  const repos = await getRepos();
+  const [repos, channel] = await Promise.all([getRepos(), getChannel()]);
   const top = repos.slice(0, 6);
 
   return (
@@ -107,9 +108,9 @@ export default async function Page() {
             <div className="term-head rv">
               <span className="kicker">the terminal</span>
               <h2>Ask me <em>anything.</em></h2>
-              <p className="lead">Well, anything this terminal knows. Type <code>help</code>, or try <code>neofetch</code>, <code>repos</code> or <code>whale</code>.</p>
+              <p className="lead">Well, anything this terminal knows. Type <code>help</code>, or try <code>projects</code>, <code>youtube</code> or <code>neofetch</code>.</p>
             </div>
-            <div className="rv"><Terminal repos={repos} /></div>
+            <div className="rv"><Terminal repos={repos} channel={channel} /></div>
           </section>
 
           <section>
@@ -176,7 +177,7 @@ export default async function Page() {
                 <a key={s.k} href={s.href} target="_blank" rel="noreferrer" className={`social rv s-${s.k.toLowerCase()}`}>
                   <span className="s-k">{s.k}</span>
                   <span className="s-h">{s.h}</span>
-                  <span className="s-d">{s.d}</span>
+                  <span className="s-d">{s.k === "YouTube" ? `${channel.subscribers} subscribers · ${channel.videos} videos · ${channel.views} views` : s.d}</span>
                   <span className="s-go">↗</span>
                 </a>
               ))}
@@ -184,7 +185,7 @@ export default async function Page() {
           </section>
 
           <section className="gap">
-            <p className="big rv">It gets dark down here.<br /><span>Move your mouse. Things glow.</span></p>
+            <p className="big rv">It gets dark down here.<br /><span>Things make their own light.</span></p>
           </section>
 
           <section id="hi">
@@ -205,6 +206,11 @@ export default async function Page() {
           <footer>
             <span>You made it to 4,000 m. Thanks for diving.</span>
             <span>© 2026 Kushagra Kanaujia</span>
+            <span className="credits">
+              Footage: humpback whale by Sylke Rohrlach, jellyfish at Monterey Bay Aquarium by Fastily, via{" "}
+              <a href="https://commons.wikimedia.org" target="_blank" rel="noreferrer">Wikimedia Commons</a>,{" "}
+              <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noreferrer">CC BY-SA 4.0</a>. Trimmed and looped for this site.
+            </span>
           </footer>
         </div>
       </main>

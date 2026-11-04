@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import type { Repo } from "./github";
+import type { Channel } from "./youtube";
 
 export const LINKS = {
   github: "https://github.com/KushagraKanaujia",
@@ -19,6 +20,7 @@ const FILES: Record<string, string> = {
   "throttle.txt": "Throttle is my startup.\nIt helps companies stop overpaying for AI.\nIt's just me for now.  →  throttle-pro.com",
   "likes.txt": "- sunsets on the IV bluffs\n- making little iOS apps\n- making short videos about AI and tech\n- hard bugs in huge codebases\n- good design and smooth animations\n- startups",
   "contact.txt": "email     kushagrakanaujia@ucsb.edu\nlinkedin  linkedin.com/in/kushagra-kanaujia\ngithub    github.com/KushagraKanaujia\nx         @kush_1309\nyoutube   @ai_reveal_tech",
+  "projects.txt": "Throttle          my startup. helps companies stop overpaying for AI\nSpreadReader      comic + PDF reader for foldable iPhones (iOS)\nJobPilot          daily tracker for new AI and startup job postings\nShorts autopilot  topic in, finished YouTube Short out\nclaude-cost-proxy see what every Claude Code request costs\nLiveKit fix       open source: ESP32 devices that couldn't connect\n\nmore: type projects, or repos for everything on GitHub",
   "secret.txt": "you found it. there's a whale in here somewhere.\ntry: whale",
 };
 
@@ -27,6 +29,8 @@ const COMMANDS: [string, string][] = [
   ["neofetch", "me, as a system info screen"],
   ["ls", "list files"],
   ["cat <file>", "read a file, e.g. cat about.txt"],
+  ["projects", "everything I've built, with details"],
+  ["youtube", "my YouTube channel, live stats"],
   ["repos", "my GitHub repos, live"],
   ["experience", "where I've worked"],
   ["skills", "languages and tools"],
@@ -34,11 +38,11 @@ const COMMANDS: [string, string][] = [
   ["open <name>", "github · linkedin · x · youtube · throttle"],
   ["email", "write me an email"],
   ["dive / surface", "jump to the bottom or top"],
-  ["whale · squid · jelly · bubbles · glow", "things happen in the ocean"],
+  ["whale · jelly · deep · bubbles · glow", "go see the ocean"],
   ["clear", "clear the screen"],
 ];
 
-const ALL = ["help", "whoami", "neofetch", "ls", "cat", "repos", "experience", "skills", "socials", "open", "email", "dive", "surface", "whale", "bubbles", "glow", "jelly", "squid", "clear", "history", "date", "echo", "sudo", "hire", "github", "linkedin", "x", "youtube", "throttle", "pwd", "cd", "exit", "coffee"];
+const ALL = ["help", "whoami", "neofetch", "ls", "cat", "repos", "experience", "skills", "socials", "open", "email", "dive", "surface", "whale", "bubbles", "glow", "jelly", "deep", "projects", "spreadreader", "jobpilot", "shorts", "clear", "history", "date", "echo", "sudo", "hire", "github", "linkedin", "x", "youtube", "throttle", "pwd", "cd", "exit", "coffee"];
 
 const A = ({ href, children }: { href: string; children: ReactNode }) => (
   <a className="t-link" href={href} target={href.startsWith("mailto") ? undefined : "_blank"} rel="noreferrer">{children}</a>
@@ -55,7 +59,7 @@ const WAVE = String.raw`
    ~- ._ ,..,.,.,., ,.-~
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~`;
 
-export default function Terminal({ repos }: { repos: Repo[] }) {
+export default function Terminal({ repos, channel }: { repos: Repo[]; channel: Channel }) {
   const [lines, setLines] = useState<Line[]>([]);
   const [value, setValue] = useState("");
   const [hist, setHist] = useState<string[]>([]);
@@ -87,7 +91,13 @@ export default function Terminal({ repos }: { repos: Repo[] }) {
         );
         break;
       case "whoami":
-        print(<span>Kushagra Kanaujia (Kush). Software engineer, UCSB CS &apos;26, building <A href={LINKS.throttle}>Throttle</A>. I make apps, videos and things that feel nice.</span>);
+        print(
+          <div>
+            <div><b>Kushagra Kanaujia</b> <span className="t-dim">(Kush)</span></div>
+            <div>Software engineer · UCSB CS &apos;26 · founder of <A href={LINKS.throttle}>Throttle</A></div>
+            <div className="t-dim">I build apps and tools, make YouTube videos about AI and tech ({channel.subscribers} subscribers, {channel.views} views), and contribute to open source.</div>
+          </div>
+        );
         break;
       case "neofetch":
         print(
@@ -102,7 +112,8 @@ export default function Terminal({ repos }: { repos: Repo[] }) {
               <div><span className="t-key">Building</span>Throttle</div>
               <div><span className="t-key">Languages</span>Python, TypeScript, Go, Java, C++</div>
               <div><span className="t-key">Repos</span>{repos.length} public on GitHub</div>
-              <div><span className="t-key">Videos</span>YouTube @ai_reveal_tech</div>
+              <div><span className="t-key">YouTube</span>{channel.handle} · {channel.subscribers} subs · {channel.views} views</div>
+              <div><span className="t-key">Projects</span>Throttle, SpreadReader, JobPilot, Shorts autopilot</div>
               <div><span className="t-key">Home</span>by the Pacific</div>
               <div className="t-swatch">{["#0b3a5c", "#1d6f99", "#8fe3ff", "#ffc98f", "#ff9f7a", "#f4f8fb"].map((c) => <i key={c} style={{ background: c }} />)}</div>
             </div>
@@ -118,6 +129,43 @@ export default function Terminal({ repos }: { repos: Repo[] }) {
         print(f ? <pre className="t-pre">{f}</pre> : <span className="t-err">cat: {arg}: no such file</span>);
         break;
       }
+      case "projects":
+        print(
+          <div className="t-repos">
+            <div><span className="t-warm">Throttle</span> <span className="t-dim">· startup · Python</span><div className="t-dim">Helps companies stop overpaying for AI. <A href={LINKS.throttle}>throttle-pro.com</A> · <A href="https://github.com/KushagraKanaujia/throttle">code</A></div></div>
+            <div><span className="t-warm">SpreadReader</span> <span className="t-dim">· iOS · Swift</span><div className="t-dim">Comic and PDF reader for foldable iPhones: page-curl turning, fold-aware two-page spreads, paper sounds, eye-tracked haptics.</div></div>
+            <div><span className="t-warm">JobPilot</span> <span className="t-dim">· Python</span><div className="t-dim">Checks AI and startup job boards every day and shows only the brand-new postings, so I see them first.</div></div>
+            <div><span className="t-warm">Shorts autopilot</span> <span className="t-dim">· Python · video</span><div className="t-dim">Turns a trending topic into a finished YouTube Short: script, voice, matched b-roll, vertical render, publish. Powers <A href={LINKS.youtube}>{channel.handle}</A>.</div></div>
+            <div><span className="t-warm">claude-cost-proxy</span> <span className="t-dim">· Python</span><div className="t-dim">HTTP proxy for Claude Code with cost tracking, request logs and semantic caching. <A href="https://github.com/KushagraKanaujia/claude-cost-proxy">code</A></div></div>
+            <div><span className="t-warm">LiveKit fix</span> <span className="t-dim">· open source · Go</span><div className="t-dim">Tracked down why older ESP32 devices couldn&apos;t connect, across LiveKit, Pion WebRTC and two RFCs. <A href="https://github.com/livekit/livekit/pull/4876">PR #4876</A></div></div>
+            <div className="t-dim">SpreadReader, JobPilot and Shorts autopilot are private for now. type <span className="t-cmd">repos</span> for everything public.</div>
+          </div>
+        );
+        break;
+      case "spreadreader":
+        print(<span><span className="t-warm">SpreadReader</span>: comic and PDF reader for foldable iPhones. Page-curl turning, fold-aware spreads, paper sounds and eye-tracked haptics. SwiftUI. Private for now.</span>);
+        break;
+      case "jobpilot":
+        print(<span><span className="t-warm">JobPilot</span>: checks AI and startup job boards daily and surfaces only brand-new postings. Python. Private for now.</span>);
+        break;
+      case "shorts":
+        print(<span><span className="t-warm">Shorts autopilot</span>: trending topic in, finished vertical Short out (script, voice, b-roll, render, publish). It runs <A href={LINKS.youtube}>{channel.handle}</A>.</span>);
+        break;
+      case "youtube":
+      case "yt":
+        print(
+          <div>
+            <div><span className="t-warm">▶ {channel.handle}</span> <span className="t-dim">· since {channel.since}</span></div>
+            <div className="t-grid" style={{ marginTop: 4 }}>
+              <div><span className="t-cmd">subscribers</span><span>{channel.subscribers}</span></div>
+              <div><span className="t-cmd">total views</span><span>{channel.views}</span></div>
+              <div><span className="t-cmd">videos</span><span>{channel.videos}</span></div>
+              <div><span className="t-cmd">about</span><span>Short videos about AI and tech. I write, cut and post them myself.</span></div>
+            </div>
+            <div style={{ marginTop: 4 }}><A href={LINKS.youtube}>watch on YouTube →</A></div>
+          </div>
+        );
+        break;
       case "repos":
         print(
           <div className="t-repos">
@@ -168,7 +216,7 @@ export default function Terminal({ repos }: { repos: Repo[] }) {
         );
         break;
       case "open":
-      case "github": case "linkedin": case "x": case "youtube": case "throttle": {
+      case "github": case "linkedin": case "x": case "throttle": {
         const key = (n === "open" ? arg : n).toLowerCase() as keyof typeof LINKS;
         if (!LINKS[key]) { print(<span className="t-dim">usage: open github | linkedin | x | youtube | throttle</span>); break; }
         print(<span>opening <A href={LINKS[key]}>{LINKS[key].replace(/^https?:\/\/(www\.)?|^mailto:/, "")}</A> …</span>);
@@ -187,11 +235,11 @@ export default function Terminal({ repos }: { repos: Repo[] }) {
         print(<span>heading up. sunlight ahead.</span>);
         window.scrollTo({ top: 0, behavior: "smooth" });
         break;
-      case "whale": print(<span>🐋 calling a humpback… look behind the page.</span>); ocean("whale"); break;
+      case "whale": print(<span>🐋 taking you to the humpback…</span>); ocean("whale"); break;
+      case "deep": print(<span>🪼 heading to the abyss. it glows down there.</span>); ocean("deep"); break;
       case "bubbles": print(<span>🫧 blub blub.</span>); ocean("bubbles"); break;
       case "glow": print(<span>✨ waking up the plankton.</span>); ocean("glow"); break;
-      case "jelly": print(<span>🪼 here come the jellies.</span>); ocean("jelly"); break;
-      case "squid": print(<span>🦑 a squid is jetting in from the deep.</span>); ocean("squid"); break;
+      case "jelly": print(<span>🪼 to the jellyfish…</span>); ocean("jelly"); break;
       case "clear": setLines([]); break;
       case "history": print(<pre className="t-pre">{hist.map((h, i) => `${String(i + 1).padStart(3)}  ${h}`).join("\n") || "nothing yet"}</pre>); break;
       case "date": print(<span>{new Date().toString()}</span>); break;
@@ -264,7 +312,7 @@ export default function Terminal({ repos }: { repos: Repo[] }) {
     } else if (e.key === "l" && e.ctrlKey) { e.preventDefault(); setLines([]); }
   }
 
-  const chips = ["help", "neofetch", "repos", "socials", "whale", "glow"];
+  const chips = ["help", "whoami", "projects", "youtube", "repos", "socials", "whale"];
 
   return (
     <div className="term" ref={boxRef} onClick={() => inputRef.current?.focus({ preventScroll: true })}>

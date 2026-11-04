@@ -288,3 +288,25 @@ footer span:first-child { color: var(--warm); }
 .s-d { font-size: 13.5px; color: var(--dim); }
 .s-go { position: absolute; top: 18px; right: 20px; color: var(--dim); transition: transform .3s, color .3s; }
 .social:hover .s-go { transform: translate(2px, -2px); color: var(--warm); }
+
+/* ---------- v4: real footage layers ---------- */
+.ocean.water { z-index: -4; }
+.footage {
+  position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: -3;
+  object-fit: cover; opacity: 0; pointer-events: none;
+  transform-origin: 50% 45%; will-change: opacity, transform;
+  filter: saturate(1.08) contrast(1.04);
+}
+.f-whale { object-position: 50% 40%; }
+.f-crystal { filter: saturate(1.1) contrast(1.08) brightness(.95); }
+/* grade on top of the footage: deep blue shadows, a touch of warmth up top, darker edges for text */
+.footage-grade {
+  position: fixed; inset: 0; z-index: -2; pointer-events: none;
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(255, 190, 130, 0.07), transparent 55%),
+    radial-gradient(130% 100% at 50% 50%, transparent 45%, rgba(1, 8, 20, 0.6) 100%),
+    linear-gradient(180deg, rgba(2, 14, 30, 0.12), rgba(2, 10, 24, 0.35));
+}
+.ocean.life { z-index: -1; pointer-events: none; }
+.credits { font-size: 11.5px; color: var(--dim); opacity: .8; max-width: 640px; line-height: 1.5; }
+.credits a { border-bottom: 1px solid var(--edge); }
