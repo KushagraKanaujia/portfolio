@@ -1,3 +1,4 @@
+import { Wordmark } from "./Logo";
 import Ocean from "./Ocean";
 import DiveLine from "./DiveLine";
 import Network from "./Network";
@@ -39,7 +40,7 @@ export default async function Page() {
       <Jiggle />
 
       <nav className="bar">
-        <a href="#top" className="me">Kushagra</a>
+        <a href="#top" className="me" aria-label="Kushagra Kanaujia, home"><Wordmark /></a>
         <a href="#terminal" className="hide-xs">terminal</a>
         <a href="#network">network</a>
         <a href="#made">projects</a>

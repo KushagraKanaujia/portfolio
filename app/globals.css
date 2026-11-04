@@ -541,3 +541,16 @@ a.jiggle, button.jiggle, .repo.jiggle, .card.jiggle, .log li.jiggle { position: 
 .hero .hero-links a { font-size: 13px; padding: 7px 14px; }
 
 .bar { background: rgba(4, 18, 34, 0.82); }
+
+/* ---------- v10: KK logo ---------- */
+.bar a.me { padding: 1px 14px 3px; display: inline-flex; align-items: center; }
+.kk-logo {
+  display: inline-flex; align-items: baseline; gap: 3px;
+  font-family: var(--serif); font-size: 29px; line-height: 1; letter-spacing: .04em; -webkit-text-stroke: .6px #f3c98b;
+  background: linear-gradient(100deg, #fff4dc 0%, #f3c98b 45%, #d9a066 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: 0 0 18px rgba(243, 201, 139, .25);
+  transition: letter-spacing .4s cubic-bezier(.2,.8,.2,1);
+}
+.bar a.me:hover .kk-logo { letter-spacing: .14em; }
+.kk-dot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: var(--aqua); box-shadow: 0 0 10px rgba(143,227,255,.8); }

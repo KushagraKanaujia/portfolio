@@ -1,3 +1,4 @@
+import { Wordmark } from "../../Logo";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -28,7 +29,7 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
       <Reveal />
       <Jiggle />
       <nav className="bar">
-        <Link href="/" className="me">Kushagra</Link>
+        <Link href="/" className="me" aria-label="Kushagra Kanaujia, home"><Wordmark /></Link>
         <Link href="/#network">network</Link>
         <Link href="/#made">projects</Link>
         <a href={L.email}>contact</a>
