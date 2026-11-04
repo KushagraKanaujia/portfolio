@@ -52,7 +52,7 @@ export default async function Page() {
               <span className="last">Kanaujia<span className="dotc">.</span></span>
             </h1>
             <p className="intro rv">
-              Hey, I&apos;m Kush. Software engineer in San Francisco, CS grad from UCSB. I build software end to
+              Hey, I&apos;m Kushagra. Software engineer in San Francisco, CS grad from UCSB. I build software end to
               end: backends, ML, and apps that feel good to use.
             </p>
             <div className="hero-links rv">

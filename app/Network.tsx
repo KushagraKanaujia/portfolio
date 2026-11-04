@@ -63,7 +63,7 @@ export default function Network() {
 
     const nodes: N[] = [];
     const make = (it: Item, r: number): N => ({ ...it, x: 0, y: 0, vx: 0, vy: 0, r, ph: R() * 6, lit: 0 });
-    nodes.push(make({ id: "me", label: "Kush", kind: "me", desc: "Software engineer, UCSB CS '26. Everything here connects back to me.", links: [] }, 11));
+    nodes.push(make({ id: "me", label: "Kushagra", kind: "me", desc: "Software engineer, UCSB CS '26. Everything here connects back to me.", links: [] }, 11));
     ITEMS.forEach((it) => nodes.push(make(it, it.kind === "work" ? 7 : 8)));
     SKILLS.forEach((s) => nodes.push(make({ id: s, label: s, kind: "skill", desc: "", links: [] }, 4.2)));
     const byId = new Map(nodes.map((n) => [n.id, n]));

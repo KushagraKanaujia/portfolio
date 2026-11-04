@@ -10,7 +10,7 @@ export { LINKS };
 type Line = { kind: "in" | "out"; node: ReactNode };
 
 const FILES: Record<string, string> = {
-  "about.txt": "Kushagra Kanaujia, Kush for short.\nSoftware engineer. UCSB computer science, class of 2026.\nBased in San Francisco.\nI like making things that feel good to use.",
+  "about.txt": "Kushagra Kanaujia.\nSoftware engineer. UCSB computer science, class of 2026.\nBased in San Francisco.\nI like making things that feel good to use.",
   "throttle.txt": "Throttle is my startup.\nIt helps companies stop overpaying for AI.\nIt's just me for now.  →  throttle-pro.com",
   "likes.txt": "- making little iOS apps\n- making short videos about AI and tech\n- hard bugs in huge codebases\n- good design and smooth animations\n- startups",
   "contact.txt": "email     kushagrakanaujia@ucsb.edu\nlinkedin  linkedin.com/in/kushagra-kanaujia\ngithub    github.com/KushagraKanaujia\nx         @kush_1309\nyoutube   @ai_reveal_tech",
@@ -87,7 +87,7 @@ export default function Terminal({ repos, channel }: { repos: Repo[]; channel: C
       case "whoami":
         print(
           <div>
-            <div><b>Kushagra Kanaujia</b> <span className="t-dim">(Kush)</span></div>
+            <div><b>Kushagra Kanaujia</b></div>
             <div>Software engineer · UCSB CS &apos;26 · founder of <A href={LINKS.throttle}>Throttle</A></div>
             <div className="t-dim">I build apps and tools, make YouTube videos about AI and tech ({channel.subscribers} subscribers, {channel.views} views), and contribute to open source.</div>
           </div>
@@ -98,7 +98,7 @@ export default function Terminal({ repos, channel }: { repos: Repo[]; channel: C
           <div className="t-neo">
             <pre className="t-wave">{WAVE}</pre>
             <div>
-              <div><span className="t-warm">kush</span>@<span className="t-warm">sf</span></div>
+              <div><span className="t-warm">kush</span>@<span className="t-warm">kk</span></div>
               <div className="t-dim">-----------------</div>
               <div><span className="t-key">Name</span>Kushagra Kanaujia</div>
               <div><span className="t-key">Role</span>Software engineer, founder</div>
@@ -248,7 +248,7 @@ export default function Terminal({ repos, channel }: { repos: Repo[]; channel: C
       case "echo": print(<span>{arg}</span>); break;
       case "pwd": print(<span>/home/kush/sf</span>); break;
       case "cd": print(<span className="t-dim">you&apos;re already where you need to be.</span>); break;
-      case "sudo": print(<span className="t-err">nice try. kush is not in the sudoers file. this incident will be reported to the whale.</span>); break;
+      case "sudo": print(<span className="t-err">nice try. you are not in the sudoers file. this incident will be reported to the whale.</span>); break;
       case "rm": print(<span className="t-err">absolutely not.</span>); break;
       case "coffee": print(<span>☕ brewing… pairs well with a hard bug.</span>); break;
       case "exit": print(<span className="t-dim">there&apos;s no leaving the ocean. try: surface</span>); break;
@@ -320,19 +320,19 @@ export default function Terminal({ repos, channel }: { repos: Repo[]; channel: C
     <div className="term" ref={boxRef} onClick={() => inputRef.current?.focus({ preventScroll: true })}>
       <div className="term-bar">
         <span className="tl r" /><span className="tl y" /><span className="tl g" />
-        <span className="term-title">kush@sf — zsh</span>
+        <span className="term-title">kush@kk — zsh</span>
       </div>
       <div className="term-body" ref={bodyRef}>
         <div className="t-dim">Last login: from San Francisco. Welcome aboard.</div>
         {lines.map((l, i) =>
           l.kind === "in" ? (
-            <div key={i} className="t-line"><span className="t-prompt">kush@sf</span><span className="t-path"> ~ </span><span className="t-arrow">❯</span> {l.node}</div>
+            <div key={i} className="t-line"><span className="t-prompt">kush@kk</span><span className="t-path"> ~ </span><span className="t-arrow">❯</span> {l.node}</div>
           ) : (
             <div key={i} className="t-out">{l.node}</div>
           )
         )}
         <div className="t-line t-input">
-          <span className="t-prompt">kush@sf</span><span className="t-path"> ~ </span><span className="t-arrow">❯</span>
+          <span className="t-prompt">kush@kk</span><span className="t-path"> ~ </span><span className="t-arrow">❯</span>
           <input
             ref={inputRef}
             value={value}
