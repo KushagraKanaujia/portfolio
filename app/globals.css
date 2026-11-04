@@ -554,3 +554,27 @@ a.jiggle, button.jiggle, .repo.jiggle, .card.jiggle, .log li.jiggle { position: 
 }
 .bar a.me:hover .kk-logo { letter-spacing: .14em; }
 .kk-dot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: var(--aqua); box-shadow: 0 0 10px rgba(143,227,255,.8); }
+
+/* ---------- v11: about ---------- */
+.statement { padding: 16vh 0 10vh; }
+.about { padding-bottom: 6vh; }
+.about-grid { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+@media (max-width: 900px) { .about-grid { grid-template-columns: 1fr; } }
+.about-text { padding: 36px 38px; border-radius: 28px; background: var(--glass); border: 1px solid var(--edge); backdrop-filter: blur(22px) saturate(140%); -webkit-backdrop-filter: blur(22px) saturate(140%); }
+@media (max-width: 600px) { .about-text { padding: 26px 22px; } }
+.about-text h2 { margin: 10px 0 18px; }
+.about-text p { color: var(--soft); font-size: 17px; line-height: 1.7; }
+.about-text p + p { margin-top: 14px; }
+.about-text b { color: var(--ink); font-weight: 600; }
+.facts { display: grid; gap: 10px; }
+.facts div { padding: 16px 18px; border-radius: 18px; background: var(--glass); border: 1px solid var(--edge); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+.facts dt { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--aqua); }
+.facts dd { margin-top: 4px; font-size: 15px; color: var(--ink); }
+.principles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 14px; }
+@media (max-width: 800px) { .principles { grid-template-columns: 1fr; } }
+.principle { padding: 22px 24px 24px; border-radius: 22px; background: rgba(170, 215, 255, 0.05); border: 1px solid var(--edge); }
+.principle-n { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; color: var(--warm); }
+.principle h3 { font-size: 18px; font-weight: 600; letter-spacing: -0.015em; margin: 10px 0 6px; }
+.principle p { color: var(--soft); font-size: 14.5px; line-height: 1.55; }
+
+.statement .words { font-size: clamp(28px, 4.1vw, 52px); line-height: 1.16; }

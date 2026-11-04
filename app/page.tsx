@@ -78,11 +78,56 @@ export default async function Page() {
 
         <section id="dive" className="statement">
           <div className="wrap">
-            <span className="kicker rv">who</span>
+            <span className="kicker rv">who I am</span>
             <ScrollWords
-              warm={["UCSB", "servers", "models", "apps", "details"]}
-              text="I just finished computer science at UCSB. I like the whole stack: servers, models, apps, and the small details that make software feel good to use. The deeper you go, the more you'll find."
+              warm={["Throttle", "backend", "ML", "iOS", "fast", "reliable"]}
+              text="I'm a software engineer in San Francisco and the founder of Throttle. I build across the stack, from backend and ML systems to iOS apps, and I care most about software that's fast, reliable and genuinely good to use."
             />
+          </div>
+        </section>
+
+        <section className="about wrap">
+          <div className="about-grid">
+            <div className="about-text rv">
+              <span className="kicker">about</span>
+              <h2>Engineer first, <em>founder now.</em></h2>
+              <p>
+                I graduated from <b>UC Santa Barbara</b> in 2026 with a B.S. in Computer Science, on the Dean&apos;s Honors List.
+                Along the way I interned at <b>Smartshore</b> in New York, working on a financial-services backend that served
+                100,000+ concurrent users, and at <b>Dawdle</b>, where I shipped an LLM chatbot to 1,000+ daily users. For my
+                capstone with <b>Visual Layer</b>, I trained vision models on 1.2M+ images to catch mislabeled data.
+              </p>
+              <p>
+                Today I&apos;m building <b>Throttle</b>. It helps companies stop overpaying for AI by testing which of their AI
+                work can move to cheaper models they own, and moving it only when the answers hold up.
+              </p>
+              <p>
+                I like hard problems with clear answers: a latency regression, a silent network failure, a model that looks
+                cheaper but isn&apos;t. On the side I build things to learn, like an iOS reader for foldable phones and a
+                pipeline that makes my YouTube Shorts.
+              </p>
+            </div>
+            <dl className="facts rv">
+              <div><dt>based in</dt><dd>San Francisco, CA</dd></div>
+              <div><dt>education</dt><dd>B.S. Computer Science, UC Santa Barbara &apos;26</dd></div>
+              <div><dt>building</dt><dd>Throttle, founder</dd></div>
+              <div><dt>focus</dt><dd>AI infrastructure, backend systems, iOS</dd></div>
+              <div><dt>languages</dt><dd>Python, TypeScript, Go, Swift, C++, Java</dd></div>
+              <div><dt>open source</dt><dd>LiveKit (Go, WebRTC)</dd></div>
+            </dl>
+          </div>
+          <div className="principles">
+            {[
+              { n: "01", h: "Measure, then believe", p: "A speedup or a saving only counts once it beats the noise. I'd rather know than hope." },
+              { n: "02", h: "Own it end to end", p: "Design, backend, frontend, deploy. I like seeing an idea all the way to something people use." },
+              { n: "03", h: "Sweat the details", p: "Small things, like a fast response or a smooth animation, are what make software feel good." },
+            ].map((x, i) => (
+              <div key={x.n} className="principle rv" style={{ transitionDelay: `${i * 80}ms` }}>
+                <span className="principle-n">{x.n}</span>
+                <h3>{x.h}</h3>
+                <p>{x.p}</p>
+              </div>
+            ))}
           </div>
         </section>
 
