@@ -52,8 +52,8 @@ export default async function Page() {
               <span className="last">Kanaujia<span className="dotc">.</span></span>
             </h1>
             <p className="intro rv">
-              Hey, I&apos;m Kush. Computer science grad from UCSB. I build software end to end: backends, ML,
-              and apps that feel good to use.
+              Hey, I&apos;m Kush. Software engineer in San Francisco, CS grad from UCSB. I build software end to
+              end: backends, ML, and apps that feel good to use.
             </p>
             <div className="hero-links rv">
               <a href={L.github} target="_blank" rel="noreferrer">GitHub</a>
@@ -91,7 +91,7 @@ export default async function Page() {
             <div className="sec-top rv">
               <span className="kicker">the network</span>
               <h2>Connecting <em>the dots.</em></h2>
-              <p className="lead">Everything I&apos;ve built, linked to the skills behind it. Hover a dot to light up its connections, drag them around, click a project to open it.</p>
+              <p className="lead">Everything I&apos;ve built, linked to the skills behind it. Hover a dot to light up its threads, drag things around, click any dot for the story, or filter by what you care about.</p>
             </div>
             <div className="rv"><Network /></div>
           </section>

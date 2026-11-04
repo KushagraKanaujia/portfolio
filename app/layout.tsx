@@ -6,7 +6,7 @@ const sans = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const serif = Instrument_Serif({ subsets: ["latin"], weight: "400", style: ["normal", "italic"], variable: "--font-serif" });
 
 const title = "Kushagra Kanaujia";
-const description = "Hey, I'm Kush. Software engineer, ocean person, and someone who keeps tweaking a thing until it feels just right.";
+const description = "Hey, I'm Kush. Software engineer in San Francisco. UCSB CS '26. I build software end to end.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://kushagrakanaujia.vercel.app"),

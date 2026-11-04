@@ -463,3 +463,41 @@ a.jiggle, button.jiggle, .repo.jiggle, .card.jiggle, .log li.jiggle { position: 
 @keyframes sheen { 0% { opacity: 0; } 20% { opacity: 1; } 100% { opacity: 0; } }
 .dive-st.jiggle::before { display: none; }
 @media (prefers-reduced-motion: reduce) { .jiggle, .jiggle::before { animation: none; } }
+
+/* ---------- v8: bioluminescent reef ---------- */
+.reef-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.reef-chips button {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; color: var(--soft); cursor: pointer;
+  padding: 7px 14px; border-radius: 999px; background: rgba(6, 24, 44, .45); border: 1px solid var(--edge);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: background .25s, color .25s, border-color .25s, box-shadow .25s;
+}
+.reef-chips button:hover { color: var(--ink); border-color: rgba(143,227,255,.4); }
+.reef-chips button.on { color: #03121f; background: linear-gradient(135deg, var(--aqua), #b9f0ff); border-color: transparent; box-shadow: 0 0 22px rgba(143,227,255,.45); }
+.net { background: radial-gradient(60% 60% at 50% 45%, rgba(14, 52, 88, .5), rgba(2, 10, 22, .6) 70%); }
+.net::before { /* faint caustic shimmer inside the tank */
+  content: ""; position: absolute; inset: -20%; pointer-events: none; opacity: .18;
+  background: radial-gradient(40% 30% at 30% 20%, rgba(143,227,255,.25), transparent 60%), radial-gradient(35% 25% at 75% 70%, rgba(255,201,143,.18), transparent 60%);
+  animation: tank 18s ease-in-out infinite alternate;
+}
+@keyframes tank { to { transform: translate(6%, -4%) rotate(4deg); } }
+.net-tip { display: none; }
+.reef-card {
+  position: absolute; right: 16px; top: 16px; width: min(320px, calc(100% - 32px)); z-index: 3;
+  padding: 18px 18px 16px; border-radius: 20px; background: rgba(3, 14, 28, .82); border: 1px solid rgba(143,227,255,.22);
+  backdrop-filter: blur(16px) saturate(140%); -webkit-backdrop-filter: blur(16px) saturate(140%);
+  box-shadow: 0 24px 60px -20px rgba(0,0,0,.7), 0 0 40px -10px rgba(143,227,255,.25);
+  animation: rise .5s cubic-bezier(.2,.9,.3,1.2) both;
+}
+@keyframes rise { from { opacity: 0; transform: translateY(14px) scale(.96); } }
+@media (max-width: 700px) { .reef-card { top: auto; bottom: 46px; right: 12px; left: 12px; width: auto; } }
+.reef-x { position: absolute; right: 10px; top: 8px; background: none; border: 0; color: var(--dim); font-size: 22px; line-height: 1; cursor: pointer; padding: 4px 8px; }
+.reef-x:hover { color: var(--ink); }
+.reef-kind { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; }
+.k-project { color: #ffc98f; } .k-work { color: #ff967d; } .k-skill { color: #78e1ff; } .k-me { color: #f0faff; }
+.reef-card h3 { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; margin: 6px 0 6px; }
+.reef-card p { color: var(--soft); font-size: 14px; line-height: 1.5; }
+.reef-sub { display: block; margin-top: 12px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+.reef-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.reef-tags button { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11.5px; color: var(--aqua); cursor: pointer; padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(143,227,255,.28); background: rgba(143,227,255,.07); }
+.reef-tags button:hover { background: rgba(143,227,255,.16); }
+.reef-open { display: inline-flex; margin-top: 14px; padding: 8px 16px; border-radius: 999px; font-size: 13.5px; font-weight: 500; color: #2a1408; background: linear-gradient(135deg, #ffd6a3, var(--warm-2)); }
