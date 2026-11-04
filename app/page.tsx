@@ -1,13 +1,9 @@
 import Ocean from "./Ocean";
-import { HeroFx, IVTime, Reveal, ScrollWords } from "./Client";
+import Terminal, { LINKS as L } from "./Terminal";
+import { HeroFx, Reveal, ScrollWords } from "./Client";
+import { getRepos } from "./github";
 
-const L = {
-  email: "mailto:kushagrakanaujia@ucsb.edu",
-  linkedin: "https://www.linkedin.com/in/kushagra-kanaujia",
-  github: "https://github.com/KushagraKanaujia",
-  x: "https://x.com/kush_1309",
-  throttle: "https://throttle-pro.com",
-};
+export const revalidate = 3600;
 
 const likes = [
   { e: "🌅", h: "IV sunsets", p: "Walking Del Playa at golden hour. Best free show in California." },
@@ -25,14 +21,22 @@ const path = [
   { y: "2024", w: "Smartshore", r: "software intern", x: "Backend work in New York for 100,000+ users." },
 ];
 
-const made = [
-  { n: "Throttle", t: "startup", p: "Helps companies stop overpaying for AI.", href: L.throttle },
-  { n: "LiveKit fix", t: "open source", p: "Tracked down why some ESP32 devices couldn't connect.", href: "https://github.com/livekit/livekit/pull/4876" },
-  { n: "claude-cost-proxy", t: "tool", p: "See what every Claude Code request costs you.", href: "https://github.com/KushagraKanaujia/claude-cost-proxy" },
-  { n: "streamfinder", t: "web app", p: "Find something good to watch tonight.", href: "https://streamfinder-app.vercel.app" },
+const LANG: Record<string, string> = {
+  Python: "#5aa3e0", TypeScript: "#4f8ff0", JavaScript: "#f1dd5a", Go: "#38c6d9", Java: "#e7894a",
+  "C++": "#f06d9a", "C#": "#7fd36b", Swift: "#ff8a5c", Rust: "#dea584", HTML: "#e96b4c", Solidity: "#9aa4ff", Jupyter: "#f3a24a",
+};
+
+const SOCIALS = [
+  { k: "GitHub", h: "@KushagraKanaujia", href: L.github, d: "Code, projects and open source." },
+  { k: "YouTube", h: "@ai_reveal_tech", href: L.youtube, d: "Short videos about AI and tech." },
+  { k: "X", h: "@kush_1309", href: L.x, d: "Thoughts, builds, the odd sunset." },
+  { k: "LinkedIn", h: "kushagra-kanaujia", href: L.linkedin, d: "The professional version of me." },
 ];
 
-export default function Page() {
+export default async function Page() {
+  const repos = await getRepos();
+  const top = repos.slice(0, 6);
+
   return (
     <>
       <Ocean />
@@ -42,22 +46,28 @@ export default function Page() {
       <nav className="bar">
         <a href="#top" className="me">Kushagra</a>
         <a href="#about">about</a>
-        <a href="#made" className="hide-xs">things I made</a>
+        <a href="#terminal" className="hide-xs">terminal</a>
+        <a href="#made">work</a>
         <a href="#hi">say hi</a>
       </nav>
 
       <main id="top">
         <header className="hero">
           <div className="hero-inner wrap">
-            <span className="where rv"><span className="sun-dot" /><IVTime /></span>
             <h1 className="rv">
               <span className="first">Kushagra</span>
               <span className="last">Kanaujia<span className="dotc">.</span></span>
             </h1>
             <p className="intro rv">
-              Hey, I&apos;m Kush. I live in <b>Isla Vista</b>, right by the Pacific, and I build things
-              that feel good to use.
+              Hey, I&apos;m Kush. Software engineer, ocean person, and someone who keeps tweaking a thing until
+              it feels just right.
             </p>
+            <div className="hero-links rv">
+              <a href={L.github} target="_blank" rel="noreferrer">GitHub</a>
+              <a href={L.youtube} target="_blank" rel="noreferrer">YouTube</a>
+              <a href={L.x} target="_blank" rel="noreferrer">X</a>
+              <a href={L.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
+            </div>
           </div>
           <a href="#dive" className="dive-hint"><span>scroll to dive</span><i /></a>
         </header>
@@ -78,8 +88,8 @@ export default function Page() {
               <h2>I like making things <em>people enjoy.</em></h2>
               <p className="lead">
                 I&apos;m a software engineer who cares a lot about how things feel, not just whether they work.
-                Most days you&apos;ll find me coding at home in IV, walking the bluffs, or deep in a side project
-                that started as &ldquo;just a quick idea.&rdquo;
+                Most days you&apos;ll find me coding, walking the bluffs, or deep in a side project that started as
+                &ldquo;just a quick idea.&rdquo;
               </p>
               <div className="likes">
                 {likes.map((l, i) => (
@@ -91,6 +101,15 @@ export default function Page() {
                 ))}
               </div>
             </div>
+          </section>
+
+          <section id="terminal" className="term-sec">
+            <div className="term-head rv">
+              <span className="kicker">the terminal</span>
+              <h2>Ask me <em>anything.</em></h2>
+              <p className="lead">Well, anything this terminal knows. Type <code>help</code>, or try <code>neofetch</code>, <code>repos</code> or <code>whale</code>.</p>
+            </div>
+            <div className="rv"><Terminal repos={repos} /></div>
           </section>
 
           <section>
@@ -124,17 +143,43 @@ export default function Page() {
 
           <section id="made">
             <div className="card rv">
-              <span className="kicker">things I made</span>
-              <h2>A few <em>favorites.</em></h2>
-              <div className="made">
-                {made.map((m) => (
-                  <a key={m.n} href={m.href} target="_blank" rel="noreferrer">
-                    <div className="n">{m.n} <span>{m.t} ↗</span></div>
-                    <p>{m.p}</p>
+              <span className="kicker">live from GitHub</span>
+              <h2>Things I&apos;ve <em>made.</em></h2>
+              <div className="repos">
+                {top.map((r) => (
+                  <a key={r.name} href={r.url} target="_blank" rel="noreferrer" className="repo">
+                    <div className="repo-top">
+                      <span className="repo-name">{r.name}</span>
+                      <span className="repo-go">↗</span>
+                    </div>
+                    <p>{r.description}</p>
+                    <div className="repo-meta">
+                      {r.language && <span><i style={{ background: LANG[r.language] ?? "#9fb6c8" }} />{r.language}</span>}
+                      {r.stars > 0 && <span>★ {r.stars}</span>}
+                      <span>updated {new Date(r.updated + "T12:00:00Z").toLocaleDateString("en-US", { month: "short", year: "numeric" })}</span>
+                    </div>
                   </a>
                 ))}
+                <a href="https://github.com/livekit/livekit/pull/4876" target="_blank" rel="noreferrer" className="repo oss">
+                  <div className="repo-top"><span className="repo-name">livekit/livekit #4876</span><span className="repo-go">↗</span></div>
+                  <p>Open source fix: tracked down why some ESP32 devices couldn&apos;t connect, across LiveKit, Pion WebRTC and two RFCs.</p>
+                  <div className="repo-meta"><span><i style={{ background: LANG.Go }} />Go</span><span>pull request</span></div>
+                </a>
               </div>
-              <a className="link" href={L.github} target="_blank" rel="noreferrer">more on GitHub →</a>
+              <a className="link" href={L.github} target="_blank" rel="noreferrer">all {repos.length}+ repos on GitHub →</a>
+            </div>
+          </section>
+
+          <section>
+            <div className="socials">
+              {SOCIALS.map((s) => (
+                <a key={s.k} href={s.href} target="_blank" rel="noreferrer" className={`social rv s-${s.k.toLowerCase()}`}>
+                  <span className="s-k">{s.k}</span>
+                  <span className="s-h">{s.h}</span>
+                  <span className="s-d">{s.d}</span>
+                  <span className="s-go">↗</span>
+                </a>
+              ))}
             </div>
           </section>
 
@@ -146,19 +191,20 @@ export default function Page() {
             <div className="card hi rv">
               <span className="kicker">say hi</span>
               <h2>Come say <em>hi.</em></h2>
-              <p>Want to work together, talk startups, or just get a sunset rec in IV? My inbox is open.</p>
+              <p>Want to work together, talk startups, or just say hey? My inbox is open.</p>
               <div className="btns">
                 <a className="btn warm" href={L.email}>email me</a>
                 <a className="btn" href={L.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
                 <a className="btn" href={L.github} target="_blank" rel="noreferrer">GitHub</a>
-                <a className="btn" href={L.x} target="_blank" rel="noreferrer">X · @kush_1309</a>
+                <a className="btn" href={L.youtube} target="_blank" rel="noreferrer">YouTube</a>
+                <a className="btn" href={L.x} target="_blank" rel="noreferrer">X</a>
               </div>
             </div>
           </section>
 
           <footer>
             <span>You made it to 4,000 m. Thanks for diving.</span>
-            <span>© 2026 Kushagra Kanaujia · Isla Vista, CA</span>
+            <span>© 2026 Kushagra Kanaujia</span>
           </footer>
         </div>
       </main>
